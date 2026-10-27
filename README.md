@@ -49,7 +49,7 @@ which applies pending migrations and deploys Edge Functions.
 |---|---|---|
 | `SUPABASE_PROJECT_ID` | Variable | Project ref, e.g. `abcd1234` from `abcd1234.supabase.co` |
 | `SUPABASE_ACCESS_TOKEN` | Secret | supabase.com → Account → Access Tokens |
-| `SUPABASE_DB_PASSWORD` | Secret | Database password set when creating the project |
+| `SUPABASE_DB_URL` | Secret | **Connect** → Session pooler URI, with `[YOUR-PASSWORD]` replaced |
 
 **Vercel**: import the repo, set **Root Directory** to `web`, and add
 environment variables `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`
