@@ -7,7 +7,7 @@
     "db:reset": "supabase db reset",
     "db:new": "supabase migration new",
     "db:test": "supabase test db",
-    "db:types": "supabase gen types typescript --local > web/src/types/database.ts",
+    "db:types": "supabase gen types typescript --local > web/src/types/database.ts && cd web && npx prettier --write src/types/database.ts",
     "functions:serve": "supabase functions serve"
   },
   "devDependencies": {
