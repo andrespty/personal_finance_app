@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { formatCents, toCents } from './money'
+import { centsToInput, formatCents, parseAmount, toCents } from './money'
 
 describe('toCents', () => {
   it('parses numbers and strings', () => {
@@ -25,5 +25,28 @@ describe('formatCents', () => {
     expect(formatCents(-5412)).toBe('−$54.12')
     expect(formatCents(240000, { signed: true })).toBe('+$2,400.00')
     expect(formatCents(0, { signed: true })).toBe('$0.00')
+  })
+})
+
+describe('parseAmount', () => {
+  it('parses typed amounts', () => {
+    expect(parseAmount('54.12')).toBe(5412)
+    expect(parseAmount('1,204')).toBe(120400)
+    expect(parseAmount('.5')).toBe(50)
+  })
+
+  it('returns null for empty or invalid input', () => {
+    expect(parseAmount('')).toBeNull()
+    expect(parseAmount('.')).toBeNull()
+    expect(parseAmount('1.234')).toBeNull()
+    expect(parseAmount('-5')).toBeNull()
+    expect(parseAmount('abc')).toBeNull()
+  })
+})
+
+describe('centsToInput', () => {
+  it('formats cents for an input field', () => {
+    expect(centsToInput(123456)).toBe('1234.56')
+    expect(centsToInput(-500)).toBe('5.00')
   })
 })

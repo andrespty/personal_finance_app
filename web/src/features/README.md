@@ -20,6 +20,9 @@ features/<name>/
 └── index.ts                # public exports — the only file other code imports
 ```
 
+Features that combine others (e.g. `activity`, which joins transactions and
+transfers) sit on top, so lower features never import each other in a cycle.
+
 Rules:
 
 - Import another feature only through its `index.ts`.
