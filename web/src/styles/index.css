@@ -1,0 +1,72 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/geist';
+
+/* Design tokens. See PLAN.md → Visual Style. */
+:root {
+  --bg: #ffffff;
+  --fg: #0b110e;
+  --muted: #6c7771;
+  --border: #eaedeb;
+  --fill: #f3f5f4;
+  --accent: #146b47;
+  --on-accent: #ffffff;
+  --positive: #167a4f;
+  --negative: #b5432e;
+  --card-green: #123c2c;
+  --card-graphite: #2b2f2d;
+  --card-fg: #eef5f1;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0a0d0b;
+    --fg: #f1f5f3;
+    --muted: #8a968f;
+    --border: #1e2622;
+    --fill: #141a17;
+    --accent: #5fd59a;
+    --on-accent: #04140c;
+    --positive: #5fd59a;
+    --negative: #ff8a72;
+    --card-green: #1c4a37;
+    --card-graphite: #2a302d;
+
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-fill: var(--fill);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --color-card-green: var(--card-green);
+  --color-card-graphite: var(--card-graphite);
+  --color-card-fg: var(--card-fg);
+
+  --font-sans:
+    'Geist Variable', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto,
+    sans-serif;
+}
+
+@layer base {
+  html,
+  body {
+    @apply bg-bg text-fg font-sans antialiased;
+  }
+
+  body {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@utility num {
+  font-variant-numeric: tabular-nums;
+}

@@ -9,7 +9,7 @@ API for iPhone Shortcuts. Each user has their own personal accounts and setup.
 
 | Piece | Choice | Cost |
 |---|---|---|
-| Frontend | React + Vite + TypeScript, installable PWA | Free (Cloudflare Pages / Vercel / Netlify) |
+| Frontend | React + Vite + TypeScript, Tailwind, installable PWA | Free (Vercel) |
 | Database | Supabase Postgres with Row Level Security (RLS) | Free tier |
 | Auth | Supabase Auth — email + password | Free |
 | Shortcuts API | One Supabase Edge Function (`api`, Hono router) | Free tier |
@@ -19,6 +19,10 @@ API for iPhone Shortcuts. Each user has their own personal accounts and setup.
   (`Authorization: Bearer <token>`). Tokens are generated in Settings, shown
   once, and stored hashed.
 - All money math lives in SQL views so the app and the API always agree.
+- Migrations live in `supabase/migrations/` and are applied by a GitHub Action
+  on merge to `main` — never edited in the Supabase dashboard.
+- Supabase settings: Data API on, auto-expose new tables **off** (migrations
+  grant access explicitly), automatic RLS on.
 - Note: Supabase free projects pause after ~7 days of inactivity.
 
 ---
@@ -314,7 +318,7 @@ gradients, glows, emoji icons, or chatty copy.
 
 ## 8. Build Order
 
-1. **Setup** — Supabase project + CLI, Vite app, deploy pipeline.
+1. **Setup** ✅ — Vite app, Supabase CLI config, CI + deploy workflows, Vercel config.
 2. **Core** — schema, RLS, auth, accounts, categories, transactions, balances.
 3. **Onboarding** — guided setup.
 4. **Card payers & money left** — views + dashboard.
