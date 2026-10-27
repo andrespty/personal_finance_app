@@ -9,7 +9,7 @@ API for iPhone Shortcuts. Each user has their own personal accounts and setup.
 
 | Piece | Choice | Cost |
 |---|---|---|
-| Frontend | React + Vite + TypeScript, installable PWA | Free (Cloudflare Pages / Vercel / Netlify) |
+| Frontend | React + Vite + TypeScript, Tailwind, installable PWA | Free (Vercel) |
 | Database | Supabase Postgres with Row Level Security (RLS) | Free tier |
 | Auth | Supabase Auth — email + password | Free |
 | Shortcuts API | One Supabase Edge Function (`api`, Hono router) | Free tier |
@@ -19,6 +19,10 @@ API for iPhone Shortcuts. Each user has their own personal accounts and setup.
   (`Authorization: Bearer <token>`). Tokens are generated in Settings, shown
   once, and stored hashed.
 - All money math lives in SQL views so the app and the API always agree.
+- Migrations live in `supabase/migrations/` and are applied by a GitHub Action
+  on merge to `main` — never edited in the Supabase dashboard.
+- Supabase settings: Data API on, auto-expose new tables **off** (migrations
+  grant access explicitly), automatic RLS on.
 - Note: Supabase free projects pause after ~7 days of inactivity.
 
 ---
@@ -281,9 +285,40 @@ Starter list (a template, not copied automatically):
 
 ---
 
-## 7. Build Order
+## 7. Visual Style
 
-1. **Setup** — Supabase project + CLI, Vite app, deploy pipeline.
+Direction: **bold & minimal + wallet cards**. Clean, flat, no boxes; big
+numbers; credit cards drawn as real cards. Must not feel AI-generated: no
+gradients, glows, emoji icons, or chatty copy.
+
+- **Layout:** flat white/black background, lists separated by hairlines, no
+  card containers. Big balance on top.
+- **Credit cards:** rendered as physical cards (1.586 ratio) with owed amount
+  and payer split bar. Swipeable row on Dashboard, full width on Card detail.
+- **Type:** Geist (system font fallback), tabular numbers. Hero balance 48px,
+  amount entry 56px.
+- **Forms:** bottom sheets; amount first, with number pad.
+- **Motion:** 150–200 ms fades/slides only.
+- **Dark mode:** follows the system.
+
+| Token | Light | Dark |
+|---|---|---|
+| Background | `#FFFFFF` | `#0A0D0B` |
+| Text | `#0B110E` | `#F1F5F3` |
+| Secondary | `#6C7771` | `#8A968F` |
+| Border | `#EAEDEB` | `#1E2622` |
+| Fill (inputs, tracks) | `#F3F5F4` | `#141A17` |
+| Accent (green) | `#146B47` | `#5FD59A` |
+| Money in | `#167A4F` | `#5FD59A` |
+| Owed / out | `#B5432E` | `#FF8A72` |
+| Card (green) | `#123C2C` | `#1C4A37` |
+| Card (graphite) | `#2B2F2D` | `#2A302D` |
+
+---
+
+## 8. Build Order
+
+1. **Setup** ✅ — Vite app, Supabase CLI config, CI + deploy workflows, Vercel config.
 2. **Core** — schema, RLS, auth, accounts, categories, transactions, balances.
 3. **Onboarding** — guided setup.
 4. **Card payers & money left** — views + dashboard.
