@@ -281,7 +281,38 @@ Starter list (a template, not copied automatically):
 
 ---
 
-## 7. Build Order
+## 7. Visual Style
+
+Direction: **bold & minimal + wallet cards**. Clean, flat, no boxes; big
+numbers; credit cards drawn as real cards. Must not feel AI-generated: no
+gradients, glows, emoji icons, or chatty copy.
+
+- **Layout:** flat white/black background, lists separated by hairlines, no
+  card containers. Big balance on top.
+- **Credit cards:** rendered as physical cards (1.586 ratio) with owed amount
+  and payer split bar. Swipeable row on Dashboard, full width on Card detail.
+- **Type:** Geist (system font fallback), tabular numbers. Hero balance 48px,
+  amount entry 56px.
+- **Forms:** bottom sheets; amount first, with number pad.
+- **Motion:** 150–200 ms fades/slides only.
+- **Dark mode:** follows the system.
+
+| Token | Light | Dark |
+|---|---|---|
+| Background | `#FFFFFF` | `#0A0D0B` |
+| Text | `#0B110E` | `#F1F5F3` |
+| Secondary | `#6C7771` | `#8A968F` |
+| Border | `#EAEDEB` | `#1E2622` |
+| Fill (inputs, tracks) | `#F3F5F4` | `#141A17` |
+| Accent (green) | `#146B47` | `#5FD59A` |
+| Money in | `#167A4F` | `#5FD59A` |
+| Owed / out | `#B5432E` | `#FF8A72` |
+| Card (green) | `#123C2C` | `#1C4A37` |
+| Card (graphite) | `#2B2F2D` | `#2A302D` |
+
+---
+
+## 8. Build Order
 
 1. **Setup** — Supabase project + CLI, Vite app, deploy pipeline.
 2. **Core** — schema, RLS, auth, accounts, categories, transactions, balances.
