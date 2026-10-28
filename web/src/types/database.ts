@@ -290,6 +290,7 @@ export type Database = {
       }
     }
     Functions: {
+      add_categories: { Args: { categories: Json }; Returns: undefined }
       create_transfer: {
         Args: {
           amount_cents: number

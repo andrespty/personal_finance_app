@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router'
 
 import { RedirectIfSignedIn, RequireAuth } from '@/features/auth'
+import { RequireOnboarded } from '@/features/onboarding'
 import { AccountDetailPage } from '@/pages/AccountDetailPage'
 import { AccountsPage } from '@/pages/AccountsPage'
 import { ActivityPage } from '@/pages/ActivityPage'
@@ -9,6 +10,7 @@ import { DashboardPage } from '@/pages/DashboardPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { SettingsPage } from '@/pages/SettingsPage'
+import { SetupPage } from '@/pages/SetupPage'
 import { SignUpPage } from '@/pages/SignUpPage'
 
 import { AppLayout } from './layouts/AppLayout'
@@ -27,9 +29,19 @@ export const router = createBrowserRouter([
     ],
   },
   {
+    path: 'setup',
     element: (
       <RequireAuth>
-        <AppLayout />
+        <SetupPage />
+      </RequireAuth>
+    ),
+  },
+  {
+    element: (
+      <RequireAuth>
+        <RequireOnboarded>
+          <AppLayout />
+        </RequireOnboarded>
       </RequireAuth>
     ),
     children: [
