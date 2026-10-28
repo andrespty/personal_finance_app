@@ -29,11 +29,19 @@ npm run dev
 | `npm run db:reset` | Rebuild the local DB from migrations + seed |
 | `npm run db:test` | Run pgTAP tests in `supabase/tests` |
 | `npm run db:types` | Regenerate `web/src/types/database.ts` |
+| `npm run functions:serve` | Run the Shortcuts API locally |
 
 | Command (`web/`) | What it does |
 |---|---|
 | `npm run dev` | Start the app |
 | `npm run lint` / `typecheck` / `test` / `format` | Checks (also run in CI) |
+
+## Shortcuts API
+
+`supabase/functions/api` is the API for iPhone Shortcuts (Hono on Deno). See
+[shortcuts/README.md](shortcuts/README.md) for building Shortcuts and the
+endpoint reference. Checks, from `supabase/functions/api`:
+`deno fmt --check && deno lint && deno check index.ts && deno test`.
 
 ## Database changes
 
