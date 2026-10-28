@@ -70,3 +70,21 @@
 @utility num {
   font-variant-numeric: tabular-nums;
 }
+
+/* Bottom sheet (components/ui/Sheet) */
+@keyframes sheet-in {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+
+.sheet[open] {
+  animation: sheet-in 180ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet[open] {
+    animation: none;
+  }
+}

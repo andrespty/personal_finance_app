@@ -322,7 +322,8 @@ gradients, glows, emoji icons, or chatty copy.
 1. **Setup** ✅ — Vite app, Supabase CLI config, CI + deploy workflows, Vercel config.
 2. **Core**
    - 2a ✅ Database — schema, RLS, transfer/payment function, balances, pgTAP tests.
-   - 2b Login and first screens — auth, accounts, categories, transactions.
+   - 2b ✅ Login and first screens — auth, accounts, categories, transactions,
+     transfers/payments, activity.
 3. **Onboarding** — guided setup.
 4. **Card payers & money left** — views + dashboard.
 5. **API** — token management, `api` Edge Function, first Shortcuts.
