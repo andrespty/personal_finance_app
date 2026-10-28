@@ -79,6 +79,7 @@
   },
   "workspace": {
     "dependencies": [
+      "jsr:@std/assert@1.0.13",
       "npm:@supabase/supabase-js@2.117.3",
       "npm:hono@4.13.13",
       "npm:zod@4.6.7"

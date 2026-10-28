@@ -1,4 +1,4 @@
-import { assertEquals, assertMatch } from 'jsr:@std/assert@1.0.13'
+import { assertEquals, assertMatch } from '@std/assert'
 
 import { createApp } from './app.ts'
 import { type Db, DbCallError } from './_shared/db.ts'
