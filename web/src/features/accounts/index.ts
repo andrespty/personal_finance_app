@@ -7,6 +7,7 @@ export {
   useDeleteAccount,
   useUpdateAccount,
 } from './api/accounts.queries'
+export { AccountDangerZone } from './components/AccountDangerZone/AccountDangerZone'
 export { AccountForm } from './components/AccountForm/AccountForm'
 export { AccountRow } from './components/AccountRow/AccountRow'
 export { CreditCard } from './components/CreditCard/CreditCard'

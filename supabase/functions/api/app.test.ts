@@ -89,15 +89,16 @@ Deno.test('card refund is negative; type is case-insensitive', async () => {
       type: 'Refund',
       amount: 20,
       category: 'Food',
+      merchant: 'Uniqlo',
       date: '2026-10-27T09:30:00-05:00',
     },
   })
-  assertEquals(await res.text(), 'Logged a $20.00 refund on Venture X.')
+  assertEquals(await res.text(), 'Logged a $20.00 refund from Uniqlo on Venture X.')
   assertEquals(calls[1].args.amount_cents, -2000)
   assertEquals(calls[1].args.on_date, '2026-10-27')
 })
 
-Deno.test('card transactions require a category and a positive amount', async () => {
+Deno.test('card transactions require a category, a merchant and a positive amount', async () => {
   const { db } = fakeDb()
   const noCategory = await request(db, '/v1/card-transactions', {
     method: 'POST',
@@ -106,9 +107,15 @@ Deno.test('card transactions require a category and a positive amount', async ()
   assertEquals(noCategory.status, 400)
   assertEquals((await noCategory.json()).error, 'category is required.')
 
+  const noMerchant = await request(db, '/v1/card-transactions', {
+    method: 'POST',
+    json: { card: 'vx', amount: 5, category: 'Food' },
+  })
+  assertEquals((await noMerchant.json()).error, 'merchant is required.')
+
   const negative = await request(db, '/v1/card-transactions', {
     method: 'POST',
-    json: { card: 'vx', amount: '-5', category: 'Food' },
+    json: { card: 'vx', amount: '-5', category: 'Food', merchant: 'Shop' },
   })
   assertEquals(
     (await negative.json()).error,

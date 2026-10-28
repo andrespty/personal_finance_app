@@ -8,7 +8,7 @@ export const cardTransactionSchema = z.object({
   amount,
   category: reference('category'),
   description: optionalText('description', 200),
-  merchant: optionalText('merchant', 100),
+  merchant: reference('merchant').max(100, 'merchant must be 100 characters or fewer.'),
   date,
 })
 

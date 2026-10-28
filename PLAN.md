@@ -116,7 +116,7 @@ Auth: `Authorization: Bearer <token>`
 
 | # | Method | Route | Body / Params |
 |---|---|---|---|
-| 1 | `POST` | `/v1/card-transactions` | `card`, `type: charge \| refund`, `amount`, `category`, `description?`, `merchant?`, `date?` |
+| 1 | `POST` | `/v1/card-transactions` | `card`, `type: charge \| refund`, `amount`, `category`, `merchant`, `description?`, `date?` |
 | 2 | `POST` | `/v1/transfers` | `from`, `to`, `amount`, `date?`, `note?` |
 | 3 | `POST` | `/v1/deposits` | `account`, `amount`, `category?`, `description?`, `date?` |
 | 4 | `POST` | `/v1/withdrawals` | same as deposits (stored as negative) |

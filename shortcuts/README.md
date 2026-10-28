@@ -41,7 +41,7 @@ Add `?format=text` to any URL to get back one plain sentence, ready for
 3. **Get Dictionary Value**: `categories` → `path` → **Choose from List**
    ("Category?")
 4. **Ask for Input**: Number, "Amount?"
-5. **Ask for Input**: Text, "Where?" (optional)
+5. **Ask for Input**: Text, "Where?"
 6. **Get Contents of URL**: POST `…/card-transactions?format=text`, JSON body:
    `card` = chosen card, `amount` = amount, `category` = chosen category,
    `merchant` = where
@@ -97,7 +97,7 @@ are positive dollars, as a number or text (`12.5`, `"$1,204.30"`). `date` is
 
 | Method | Path | Body |
 |---|---|---|
-| POST | `/card-transactions` | `card`, `amount`, `category`, `type`? (`charge` or `refund`, default `charge`), `merchant`?, `description`?, `date`? |
+| POST | `/card-transactions` | `card`, `amount`, `category`, `merchant`, `type`? (`charge` or `refund`, default `charge`), `description`?, `date`? |
 | POST | `/deposits` | `account`, `amount`, `category`?, `description`?, `date`? |
 | POST | `/withdrawals` | same as deposits; recorded as money out |
 | POST | `/transfers` | `from`, `to`, `amount`, `note`?, `date`? |

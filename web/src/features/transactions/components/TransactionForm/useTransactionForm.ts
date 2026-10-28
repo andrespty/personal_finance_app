@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useAccounts, type Account } from '@/features/accounts'
+import { useCategories } from '@/features/categories'
 import { todayISO } from '@/lib/dates'
 import { errorMessage } from '@/lib/errors'
 import { fieldErrors } from '@/lib/validation'
@@ -45,7 +46,20 @@ export function useTransactionForm({
     () => initialAccount?.id ?? accountsForEntry(accounts, entryType)[0]?.id ?? '',
   )
   const [amount, setAmount] = useState(transaction ? centsToInput(transaction.amount_cents) : '')
-  const [categoryId, setCategoryId] = useState(transaction?.category_id ?? '')
+  // The picker splits a category into its top-level category and optional
+  // subcategory; the transaction stores whichever is most specific.
+  const { data: categories = [] } = useCategories()
+  const initialCategory = categories.find((c) => c.id === transaction?.category_id)
+  const [categoryId, setCategoryIdState] = useState(
+    initialCategory ? (initialCategory.parent_id ?? initialCategory.id) : '',
+  )
+  const [subcategoryId, setSubcategoryId] = useState(
+    initialCategory?.parent_id ? initialCategory.id : '',
+  )
+  const setCategoryId = (next: string) => {
+    setCategoryIdState(next)
+    setSubcategoryId('')
+  }
   const [text, setText] = useState(transaction?.merchant ?? transaction?.description ?? '')
   const [date, setDate] = useState(transaction?.date ?? todayISO())
   const [errors, setErrors] = useState<Partial<Record<Field, string>>>({})
@@ -78,7 +92,7 @@ export function useTransactionForm({
       entryType,
       accountId,
       amount,
-      categoryId,
+      categoryId: subcategoryId || categoryId,
       text,
       date,
     })
@@ -128,13 +142,15 @@ export function useTransactionForm({
   return {
     isEdit: Boolean(transaction),
     accounts,
+    categories,
     accountOptions: accountsForEntry(accounts, entryType),
-    values: { entryType, accountId, amount, categoryId, text, date },
+    values: { entryType, accountId, amount, categoryId, subcategoryId, text, date },
     set: {
       entryType: setEntryType,
       accountId: withClear('accountId', setAccountId),
       amount: withClear('amount', setAmount),
       categoryId: withClear('categoryId', setCategoryId),
+      subcategoryId: setSubcategoryId,
       text: withClear('text', setText),
       date: withClear('date', setDate),
     },

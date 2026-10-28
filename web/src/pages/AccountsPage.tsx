@@ -7,7 +7,12 @@ import {
   AccountRow,
   groupAccounts,
   useAccounts,
+  type Account,
 } from '@/features/accounts'
+import { PayerCard } from '@/features/card-payers'
+import { formatCents } from '@/lib/money'
+
+const total = (accounts: Account[]) => accounts.reduce((sum, a) => sum + a.balanceCents, 0)
 
 export function AccountsPage() {
   const { data: accounts = [], isPending } = useAccounts({ includeArchived: true })
@@ -17,7 +22,7 @@ export function AccountsPage() {
   const archived = accounts.filter((a) => a.archived)
 
   return (
-    <main className="flex flex-col gap-6">
+    <main className="flex flex-col gap-9">
       <PageHeader
         title="Accounts"
         action={
@@ -40,13 +45,36 @@ export function AccountsPage() {
           action={<Button onClick={() => setAdding(true)}>Add account</Button>}
         />
       ) : (
-        groupAccounts(active).map((group) => (
-          <Section key={group.type} title={accountGroupTitles[group.type]}>
-            {group.accounts.map((account) => (
-              <AccountRow key={account.id} account={account} />
-            ))}
-          </Section>
-        ))
+        groupAccounts(active).map((group) =>
+          group.type === 'credit_card' ? (
+            <Section
+              key={group.type}
+              title={accountGroupTitles[group.type]}
+              meta={`${formatCents(total(group.accounts))} owed`}
+            >
+              <div className="-mx-5 flex [scrollbar-width:none] gap-3 overflow-x-auto px-5 pt-3 pb-2.5">
+                {group.accounts.map((card, i) => (
+                  <PayerCard
+                    key={card.id}
+                    account={card}
+                    tone={i % 2 === 0 ? 'green' : 'graphite'}
+                    to={`/accounts/${card.id}`}
+                  />
+                ))}
+              </div>
+            </Section>
+          ) : (
+            <Section
+              key={group.type}
+              title={accountGroupTitles[group.type]}
+              meta={formatCents(total(group.accounts))}
+            >
+              {group.accounts.map((account) => (
+                <AccountRow key={account.id} account={account} />
+              ))}
+            </Section>
+          ),
+        )
       )}
 
       {archived.length > 0 && (

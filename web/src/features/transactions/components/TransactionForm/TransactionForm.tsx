@@ -9,7 +9,7 @@ import {
   type Segment,
 } from '@/components/ui'
 import { useAccounts } from '@/features/accounts'
-import { categoryOptions, useCategories } from '@/features/categories'
+import { buildCategoryTree, useCategories } from '@/features/categories'
 
 import type { EntryType, Transaction } from '../../types'
 import { bankEntryTypes, cardEntryTypes, entryTypeLabels, isCardEntry } from '../../utils/entryType'
@@ -37,8 +37,9 @@ export function TransactionForm(props: TransactionFormProps) {
 
 function TransactionFormFields({ transaction, defaultAccountId, onDone }: TransactionFormProps) {
   const form = useTransactionForm({ transaction, defaultAccountId, onDone })
-  const { data: categories = [] } = useCategories()
   const { values, set, errors } = form
+  const tree = buildCategoryTree(form.categories)
+  const subcategories = tree.find((c) => c.id === values.categoryId)?.children ?? []
 
   const hasCards = form.accounts.some((a) => a.type === 'credit_card')
   const hasBank = form.accounts.some((a) => a.type !== 'credit_card')
@@ -78,14 +79,25 @@ function TransactionFormFields({ transaction, defaultAccountId, onDone }: Transa
           placeholder={card ? 'Choose a category' : undefined}
           options={[
             ...(card ? [] : [{ value: '', label: 'None' }]),
-            ...categoryOptions(categories),
+            ...tree.map((c) => ({ value: c.id, label: c.name })),
           ]}
           error={errors.categoryId}
-          hint={categories.length === 0 ? 'Add categories in Settings.' : undefined}
+          hint={tree.length === 0 ? 'Add categories in Settings.' : undefined}
         />
+        {subcategories.length > 0 && (
+          <SelectField
+            label="Subcategory"
+            value={values.subcategoryId}
+            onChange={set.subcategoryId}
+            options={[
+              { value: '', label: 'None' },
+              ...subcategories.map((c) => ({ value: c.id, label: c.name })),
+            ]}
+          />
+        )}
         <TextField
           label={card ? 'Merchant' : 'Description'}
-          placeholder="Optional"
+          placeholder={card ? 'Where you bought it' : 'Optional'}
           value={values.text}
           onChange={set.text}
           error={errors.text}
