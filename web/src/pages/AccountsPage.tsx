@@ -8,8 +8,8 @@ import {
   groupAccounts,
   useAccounts,
   type Account,
+  CreditCard,
 } from '@/features/accounts'
-import { PayerCard } from '@/features/card-payers'
 import { formatCents } from '@/lib/money'
 
 const total = (accounts: Account[]) => accounts.reduce((sum, a) => sum + a.balanceCents, 0)
@@ -54,7 +54,7 @@ export function AccountsPage() {
             >
               <div className="-mx-5 flex [scrollbar-width:none] gap-3 overflow-x-auto px-5 pt-3 pb-2.5">
                 {group.accounts.map((card, i) => (
-                  <PayerCard
+                  <CreditCard
                     key={card.id}
                     account={card}
                     tone={i % 2 === 0 ? 'green' : 'graphite'}

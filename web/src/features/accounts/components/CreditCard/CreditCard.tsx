@@ -5,20 +5,16 @@ import { formatCents } from '@/lib/money'
 
 import type { Account } from '../../types'
 
-export type CardSplit = { label: string; cents: number }[]
-
 export type CreditCardProps = {
   account: Account
   /** Alternates card colors so neighbors are easy to tell apart. */
   tone?: 'green' | 'graphite'
   size?: 'md' | 'lg'
   to?: string
-  /** Who pays how much. When given, the card shows this instead of the limit. */
-  split?: CardSplit
 }
 
 /** A credit card drawn as a physical card, showing what is owed. */
-export function CreditCard({ account, tone = 'green', size = 'md', to, split }: CreditCardProps) {
+export function CreditCard({ account, tone = 'green', size = 'md', to }: CreditCardProps) {
   const owed = account.balanceCents
 
   const body = (
@@ -40,7 +36,7 @@ export function CreditCard({ account, tone = 'green', size = 'md', to, split }: 
           {formatCents(owed)}
         </div>
       </div>
-      {split && split.length > 0 ? <SplitBar split={split} /> : <LimitBar account={account} />}
+      <LimitBar account={account} />
     </>
   )
 
@@ -61,43 +57,19 @@ export function CreditCard({ account, tone = 'green', size = 'md', to, split }: 
   )
 }
 
+/** How much of the credit limit is used. Shows nothing when no limit is set. */
 function LimitBar({ account }: { account: Account }) {
   const limit = account.credit_limit_cents
-  const used = limit ? Math.min(100, Math.max(0, (account.balanceCents / limit) * 100)) : null
+  if (!limit) return <div />
+  const used = Math.min(100, Math.max(0, (account.balanceCents / limit) * 100))
   return (
     <div>
       <div className="flex justify-between text-xs opacity-65">
-        <span>{limit ? `Limit ${formatCents(limit)}` : 'No limit set'}</span>
-        {used !== null && <span>{used.toFixed(0)}% used</span>}
+        <span>Limit {formatCents(limit)}</span>
+        <span>{used.toFixed(0)}% used</span>
       </div>
       <div className="mt-1.5 h-[5px] overflow-hidden rounded-full bg-white/15">
-        <div className="bg-card-fg h-full" style={{ width: `${used ?? 0}%` }} />
-      </div>
-    </div>
-  )
-}
-
-const splitShades = ['bg-card-fg', 'bg-white/45', 'bg-white/25']
-
-function SplitBar({ split }: { split: CardSplit }) {
-  const total = split.reduce((sum, s) => sum + s.cents, 0) || 1
-  return (
-    <div>
-      <div className="flex justify-between gap-2 text-xs opacity-65">
-        {split.slice(0, 3).map((s) => (
-          <span key={s.label} className="truncate">
-            {s.label} {formatCents(s.cents)}
-          </span>
-        ))}
-      </div>
-      <div className="mt-1.5 flex h-[5px] overflow-hidden rounded-full bg-white/15">
-        {split.map((s, i) => (
-          <div
-            key={s.label}
-            className={cn('h-full', splitShades[Math.min(i, splitShades.length - 1)])}
-            style={{ width: `${(s.cents / total) * 100}%` }}
-          />
-        ))}
+        <div className="bg-card-fg h-full" style={{ width: `${used}%` }} />
       </div>
     </div>
   )

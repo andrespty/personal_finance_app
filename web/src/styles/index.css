@@ -15,6 +15,11 @@
   --card-green: #123c2c;
   --card-graphite: #2b2f2d;
   --card-fg: #eef5f1;
+  /* One color per account paying a card (Who pays, Categories). */
+  --payer-1: #146b47;
+  --payer-2: #c08a1e;
+  --payer-3: #4b6fa8;
+  --payer-4: #8a5bb0;
 
   color-scheme: light;
 }
@@ -32,6 +37,10 @@
     --negative: #ff8a72;
     --card-green: #1c4a37;
     --card-graphite: #2a302d;
+    --payer-1: #5fd59a;
+    --payer-2: #e0b04a;
+    --payer-3: #8fa9d6;
+    --payer-4: #c3a0e0;
 
     color-scheme: dark;
   }

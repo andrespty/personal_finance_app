@@ -1,8 +1,7 @@
 import { useState } from 'react'
 
 import { Button, EmptyState, LoadingBlock, PageHeader, Section, Sheet } from '@/components/ui'
-import { AccountForm, isCard, useAccounts } from '@/features/accounts'
-import { PayerCard } from '@/features/card-payers'
+import { AccountForm, isCard, useAccounts, CreditCard } from '@/features/accounts'
 import { MoneyLeftRow, useMoneyLeft } from '@/features/money-left'
 import { formatCents } from '@/lib/money'
 
@@ -47,7 +46,7 @@ export function DashboardPage() {
           {cards.length > 0 && (
             <div className="-mx-5 flex [scrollbar-width:none] gap-3 overflow-x-auto px-5 pt-0.5 pb-2.5">
               {cards.map((card, i) => (
-                <PayerCard
+                <CreditCard
                   key={card.id}
                   account={card}
                   tone={i % 2 === 0 ? 'green' : 'graphite'}

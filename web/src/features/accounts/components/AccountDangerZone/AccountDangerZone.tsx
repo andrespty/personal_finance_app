@@ -32,7 +32,7 @@ export function AccountDangerZone({
       setConfirmingDelete(false)
       setError(
         (e as { code?: string }).code === '23503'
-          ? 'This account has transactions, so it can’t be deleted. Archive it instead.'
+          ? 'This account has transactions or pays a card, so it can’t be deleted. Archive it instead.'
           : errorMessage(e),
       )
     }
