@@ -111,7 +111,7 @@ A payment only reduces the share of the account it came from.
 
 ## 3. API (Shortcuts) — v1
 
-Base: `https://<project>.supabase.co/functions/v1/api/v1/...`
+Base: `https://<project>.supabase.co/functions/v1/api/v1/...` (shown in Settings → API tokens)
 Auth: `Authorization: Bearer <token>`
 
 | # | Method | Route | Body / Params |
@@ -327,5 +327,6 @@ gradients, glows, emoji icons, or chatty copy.
 3. **Onboarding** ✅ — guided setup: name, accounts, cards, categories, card payers.
 4. **Card payers & money left** ✅ — payer setup per card, shares, money left on
    the dashboard and account pages.
-5. **API** — token management, `api` Edge Function, first Shortcuts.
+5. **API** ✅ — API tokens in Settings, `api` Edge Function (v1), Shortcuts guide in
+   `shortcuts/README.md`.
 6. **Features** — to be discussed.

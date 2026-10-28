@@ -28,6 +28,12 @@ export function SettingsPage() {
           to="/settings/categories"
           trailing={<ChevronRightIcon className="text-muted size-4" />}
         />
+        <ListRow
+          title="API tokens"
+          subtitle="Connect iPhone Shortcuts"
+          to="/settings/api-tokens"
+          trailing={<ChevronRightIcon className="text-muted size-4" />}
+        />
       </Section>
       <Section title="Account">
         {profile?.display_name && (

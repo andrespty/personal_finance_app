@@ -4,6 +4,7 @@ import { RedirectIfSignedIn, RequireAuth } from '@/features/auth'
 import { RequireOnboarded } from '@/features/onboarding'
 import { AccountDetailPage } from '@/pages/AccountDetailPage'
 import { AccountsPage } from '@/pages/AccountsPage'
+import { ApiTokensPage } from '@/pages/ApiTokensPage'
 import { ActivityPage } from '@/pages/ActivityPage'
 import { CategoriesPage } from '@/pages/CategoriesPage'
 import { DashboardPage } from '@/pages/DashboardPage'
@@ -51,6 +52,7 @@ export const router = createBrowserRouter([
       { path: 'activity', element: <ActivityPage /> },
       { path: 'settings', element: <SettingsPage /> },
       { path: 'settings/categories', element: <CategoriesPage /> },
+      { path: 'settings/api-tokens', element: <ApiTokensPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

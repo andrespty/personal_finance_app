@@ -66,6 +66,40 @@ export type Database = {
         }
         Relationships: []
       }
+      api_tokens: {
+        Row: {
+          created_at: string
+          id: string
+          last_used_at: string | null
+          name: string
+          revoked_at: string | null
+          token_hash: string
+          token_prefix: string
+          user_id: string
+        }
+        ComputedFields: never
+        Insert: {
+          created_at?: string
+          id?: string
+          last_used_at?: string | null
+          name: string
+          revoked_at?: string | null
+          token_hash: string
+          token_prefix: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_used_at?: string | null
+          name?: string
+          revoked_at?: string | null
+          token_hash?: string
+          token_prefix?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       card_payer_categories: {
         Row: {
           card_id: string
@@ -506,6 +540,34 @@ export type Database = {
     }
     Functions: {
       add_categories: { Args: { categories: Json }; Returns: undefined }
+      api_add_transaction: {
+        Args: {
+          account_ref: string
+          amount_cents: number
+          category_ref?: string
+          description?: string
+          kind: string
+          merchant?: string
+          on_date?: string
+          user_ref: string
+        }
+        Returns: Json
+      }
+      api_info: { Args: { user_ref: string }; Returns: Json }
+      api_money_left: { Args: { user_ref: string }; Returns: Json }
+      api_transfer: {
+        Args: {
+          amount_cents: number
+          from_ref: string
+          note?: string
+          on_date?: string
+          to_ref: string
+          user_ref: string
+        }
+        Returns: Json
+      }
+      api_user_for_token: { Args: { token: string }; Returns: string }
+      create_api_token: { Args: { name: string }; Returns: string }
       create_transfer: {
         Args: {
           amount_cents: number
@@ -533,6 +595,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      revoke_api_token: { Args: { token_id: string }; Returns: undefined }
       save_card_payers: {
         Args: { card_id: string; default_payer_id?: string; rules?: Json }
         Returns: undefined
