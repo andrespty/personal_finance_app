@@ -3,13 +3,14 @@ export const ONBOARDING_DONE = 10
 
 /**
  * Steps in order. `id` is what profiles.onboarding_step stores once the step
- * is complete; ids leave room to add steps (card payers will be 5).
+ * is complete. People who finished setup (10) before a step was added skip it.
  */
 export const onboardingSteps = [
   { id: 1, key: 'welcome' },
   { id: 2, key: 'accounts' },
   { id: 3, key: 'cards' },
   { id: 4, key: 'categories' },
+  { id: 5, key: 'payers' },
 ] as const
 
 export type OnboardingStepKey = (typeof onboardingSteps)[number]['key']

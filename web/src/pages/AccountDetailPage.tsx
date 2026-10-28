@@ -5,13 +5,14 @@ import { Button, EmptyState, LoadingBlock, PageHeader, Section, Sheet } from '@/
 import {
   AccountForm,
   accountTypeLabels,
-  CreditCard,
   isCard,
   useAccount,
   useArchiveAccount,
   useDeleteAccount,
 } from '@/features/accounts'
 import { ActivityList, QuickAddSheet, type QuickAddMode } from '@/features/activity'
+import { CoveredCardsSection, PayerCard, WhoPaysSection } from '@/features/card-payers'
+import { useMoneyLeft } from '@/features/money-left'
 import { errorMessage } from '@/lib/errors'
 import { formatCents } from '@/lib/money'
 
@@ -21,6 +22,7 @@ export function AccountDetailPage() {
   const { data: account, isPending } = useAccount(accountId)
   const archive = useArchiveAccount()
   const remove = useDeleteAccount()
+  const { data: moneyLeft = [] } = useMoneyLeft()
 
   const [editing, setEditing] = useState(false)
   const [quickAdd, setQuickAdd] = useState<QuickAddMode | null>(null)
@@ -76,14 +78,13 @@ export function AccountDetailPage() {
       />
 
       {card ? (
-        <CreditCard account={account} size="lg" />
+        <PayerCard account={account} size="lg" />
       ) : (
-        <section className="-mt-3">
-          <p className="text-muted text-sm">{accountTypeLabels[account.type]} balance</p>
-          <p className="num mt-1 text-5xl leading-[1.05] font-semibold tracking-[-0.045em]">
-            {formatCents(account.balanceCents)}
-          </p>
-        </section>
+        <BankSummary
+          label={`${accountTypeLabels[account.type]} balance`}
+          balanceCents={account.balanceCents}
+          left={moneyLeft.find((m) => m.accountId === account.id)}
+        />
       )}
 
       <div className="flex gap-3">
@@ -94,6 +95,8 @@ export function AccountDetailPage() {
           {card ? 'Pay card' : 'Transfer'}
         </Button>
       </div>
+
+      {card ? <WhoPaysSection card={account} /> : <CoveredCardsSection accountId={account.id} />}
 
       <Section title="Transactions">
         <ActivityList
@@ -143,5 +146,30 @@ export function AccountDetailPage() {
         />
       )}
     </main>
+  )
+}
+
+function BankSummary({
+  label,
+  balanceCents,
+  left,
+}: {
+  label: string
+  balanceCents: number
+  left?: { coversCents: number; moneyLeftCents: number }
+}) {
+  const covers = left?.coversCents ?? 0
+  return (
+    <section className="-mt-3">
+      <p className="text-muted text-sm">{covers > 0 ? 'Money left' : label}</p>
+      <p className="num mt-1 text-5xl leading-[1.05] font-semibold tracking-[-0.045em]">
+        {formatCents(covers > 0 ? (left?.moneyLeftCents ?? balanceCents) : balanceCents)}
+      </p>
+      {covers > 0 && (
+        <p className="text-muted mt-1.5 text-sm">
+          {label} {formatCents(balanceCents)} · {formatCents(covers)} set aside for cards
+        </p>
+      )}
+    </section>
   )
 }

@@ -66,6 +66,114 @@ export type Database = {
         }
         Relationships: []
       }
+      card_payer_categories: {
+        Row: {
+          card_id: string
+          card_payer_id: string
+          category_id: string
+          user_id: string
+        }
+        ComputedFields: never
+        Insert: {
+          card_id: string
+          card_payer_id: string
+          category_id: string
+          user_id?: string
+        }
+        Update: {
+          card_id?: string
+          card_payer_id?: string
+          category_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'card_payer_categories_card_payer_id_card_id_user_id_fkey'
+            columns: ['card_payer_id', 'card_id', 'user_id']
+            isOneToOne: false
+            referencedRelation: 'card_payers'
+            referencedColumns: ['id', 'card_id', 'user_id']
+          },
+          {
+            foreignKeyName: 'card_payer_categories_category_id_user_id_fkey'
+            columns: ['category_id', 'user_id']
+            isOneToOne: false
+            referencedRelation: 'categories'
+            referencedColumns: ['id', 'user_id']
+          },
+        ]
+      }
+      card_payers: {
+        Row: {
+          card_id: string
+          created_at: string
+          id: string
+          is_default: boolean
+          payer_account_id: string
+          user_id: string
+        }
+        ComputedFields: never
+        Insert: {
+          card_id: string
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          payer_account_id: string
+          user_id?: string
+        }
+        Update: {
+          card_id?: string
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          payer_account_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'card_payers_card_id_user_id_fkey'
+            columns: ['card_id', 'user_id']
+            isOneToOne: false
+            referencedRelation: 'account_balances'
+            referencedColumns: ['account_id', 'user_id']
+          },
+          {
+            foreignKeyName: 'card_payers_card_id_user_id_fkey'
+            columns: ['card_id', 'user_id']
+            isOneToOne: false
+            referencedRelation: 'account_money_left'
+            referencedColumns: ['account_id', 'user_id']
+          },
+          {
+            foreignKeyName: 'card_payers_card_id_user_id_fkey'
+            columns: ['card_id', 'user_id']
+            isOneToOne: false
+            referencedRelation: 'accounts'
+            referencedColumns: ['id', 'user_id']
+          },
+          {
+            foreignKeyName: 'card_payers_payer_account_id_user_id_fkey'
+            columns: ['payer_account_id', 'user_id']
+            isOneToOne: false
+            referencedRelation: 'account_balances'
+            referencedColumns: ['account_id', 'user_id']
+          },
+          {
+            foreignKeyName: 'card_payers_payer_account_id_user_id_fkey'
+            columns: ['payer_account_id', 'user_id']
+            isOneToOne: false
+            referencedRelation: 'account_money_left'
+            referencedColumns: ['account_id', 'user_id']
+          },
+          {
+            foreignKeyName: 'card_payers_payer_account_id_user_id_fkey'
+            columns: ['payer_account_id', 'user_id']
+            isOneToOne: false
+            referencedRelation: 'accounts'
+            referencedColumns: ['id', 'user_id']
+          },
+        ]
+      }
       categories: {
         Row: {
           color: string | null
@@ -192,6 +300,13 @@ export type Database = {
             foreignKeyName: 'transactions_account_id_user_id_fkey'
             columns: ['account_id', 'user_id']
             isOneToOne: false
+            referencedRelation: 'account_money_left'
+            referencedColumns: ['account_id', 'user_id']
+          },
+          {
+            foreignKeyName: 'transactions_account_id_user_id_fkey'
+            columns: ['account_id', 'user_id']
+            isOneToOne: false
             referencedRelation: 'accounts'
             referencedColumns: ['id', 'user_id']
           },
@@ -258,6 +373,13 @@ export type Database = {
             foreignKeyName: 'transfers_from_account_id_user_id_fkey'
             columns: ['from_account_id', 'user_id']
             isOneToOne: false
+            referencedRelation: 'account_money_left'
+            referencedColumns: ['account_id', 'user_id']
+          },
+          {
+            foreignKeyName: 'transfers_from_account_id_user_id_fkey'
+            columns: ['from_account_id', 'user_id']
+            isOneToOne: false
             referencedRelation: 'accounts'
             referencedColumns: ['id', 'user_id']
           },
@@ -266,6 +388,13 @@ export type Database = {
             columns: ['to_account_id', 'user_id']
             isOneToOne: false
             referencedRelation: 'account_balances'
+            referencedColumns: ['account_id', 'user_id']
+          },
+          {
+            foreignKeyName: 'transfers_to_account_id_user_id_fkey'
+            columns: ['to_account_id', 'user_id']
+            isOneToOne: false
+            referencedRelation: 'account_money_left'
             referencedColumns: ['account_id', 'user_id']
           },
           {
@@ -287,6 +416,92 @@ export type Database = {
         }
         ComputedFields: never
         Relationships: []
+      }
+      account_money_left: {
+        Row: {
+          account_id: string
+          balance_cents: number | null
+          covers_cents: number | null
+          money_left_cents: number | null
+          user_id: string
+        }
+        ComputedFields: never
+        Relationships: []
+      }
+      card_payer_shares: {
+        Row: {
+          card_id: string
+          payer_account_id: string | null
+          share_cents: number | null
+          user_id: string
+        }
+        ComputedFields: never
+        Relationships: [
+          {
+            foreignKeyName: 'transactions_account_id_user_id_fkey'
+            columns: ['card_id', 'user_id']
+            isOneToOne: false
+            referencedRelation: 'account_balances'
+            referencedColumns: ['account_id', 'user_id']
+          },
+          {
+            foreignKeyName: 'transactions_account_id_user_id_fkey'
+            columns: ['card_id', 'user_id']
+            isOneToOne: false
+            referencedRelation: 'account_money_left'
+            referencedColumns: ['account_id', 'user_id']
+          },
+          {
+            foreignKeyName: 'transactions_account_id_user_id_fkey'
+            columns: ['card_id', 'user_id']
+            isOneToOne: false
+            referencedRelation: 'accounts'
+            referencedColumns: ['id', 'user_id']
+          },
+        ]
+      }
+      card_transaction_payers: {
+        Row: {
+          amount_cents: number
+          card_id: string
+          category_id: string | null
+          date: string
+          kind: Database['public']['Enums']['transaction_kind']
+          payer_account_id: string | null
+          transaction_id: string
+          user_id: string
+        }
+        ComputedFields: never
+        Relationships: [
+          {
+            foreignKeyName: 'transactions_account_id_user_id_fkey'
+            columns: ['card_id', 'user_id']
+            isOneToOne: false
+            referencedRelation: 'account_balances'
+            referencedColumns: ['account_id', 'user_id']
+          },
+          {
+            foreignKeyName: 'transactions_account_id_user_id_fkey'
+            columns: ['card_id', 'user_id']
+            isOneToOne: false
+            referencedRelation: 'account_money_left'
+            referencedColumns: ['account_id', 'user_id']
+          },
+          {
+            foreignKeyName: 'transactions_account_id_user_id_fkey'
+            columns: ['card_id', 'user_id']
+            isOneToOne: false
+            referencedRelation: 'accounts'
+            referencedColumns: ['id', 'user_id']
+          },
+          {
+            foreignKeyName: 'transactions_category_id_user_id_fkey'
+            columns: ['category_id', 'user_id']
+            isOneToOne: false
+            referencedRelation: 'categories'
+            referencedColumns: ['id', 'user_id']
+          },
+        ]
       }
     }
     Functions: {
@@ -317,6 +532,10 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      save_card_payers: {
+        Args: { card_id: string; default_payer_id?: string; rules?: Json }
+        Returns: undefined
       }
     }
     Enums: {

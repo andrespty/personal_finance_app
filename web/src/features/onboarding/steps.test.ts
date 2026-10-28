@@ -11,7 +11,7 @@ describe('resumeIndex', () => {
 
 describe('isOnboarded', () => {
   it('is true only once setup is finished', () => {
-    expect(isOnboarded(4)).toBe(false)
+    expect(isOnboarded(5)).toBe(false)
     expect(isOnboarded(ONBOARDING_DONE)).toBe(true)
   })
 })
