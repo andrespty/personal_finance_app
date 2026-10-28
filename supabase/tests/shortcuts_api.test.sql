@@ -33,7 +33,7 @@ insert into public.accounts (id, name, alias, type, opening_balance_cents) value
   ('00000000-0000-0000-0000-0000000000c2', 'Savings', 'savings', 'savings', 0);
 insert into public.accounts (id, name, alias, wallet_name, type) values
   ('00000000-0000-0000-0000-0000000000d1', 'Venture X', 'vx', 'Venture X Card', 'credit_card');
-select public.add_categories('[{"name": "Shopping", "children": ["Clothing"]}, {"name": "Kids", "children": ["Clothing"]}, {"name": "Food"}]');
+select public.add_categories('[{"name": "Other"}, {"name": "Shopping", "children": ["Other", "Clothing"]}, {"name": "Kids", "children": ["Clothing"]}, {"name": "Food"}]');
 select public.save_card_payers('00000000-0000-0000-0000-0000000000d1', '00000000-0000-0000-0000-0000000000c1');
 
 select throws_ok($$ select public.api_info('00000000-0000-0000-0000-00000000000a') $$, '42501', null,
@@ -50,10 +50,10 @@ reset role;
 select isnt((select last_used_at from public.api_tokens), null, 'using a token records when');
 set local role service_role;
 
-select is(public.api_info('00000000-0000-0000-0000-00000000000a') -> 'categories', '["Food", "Kids", "Shopping"]'::jsonb,
-  'info lists top-level category names');
+select is(public.api_info('00000000-0000-0000-0000-00000000000a') -> 'categories', '["Food", "Kids", "Shopping", "Other"]'::jsonb,
+  'info lists top-level category names, with Other last');
 select is(public.api_info('00000000-0000-0000-0000-00000000000a') -> 'subcategories',
-  '{"Food": [], "Kids": ["Clothing"], "Shopping": ["Clothing"]}'::jsonb,
+  '{"Food": [], "Kids": ["Clothing"], "Other": [], "Shopping": ["Clothing", "Other"]}'::jsonb,
   'subcategories are listed under their category''s name, empty when there are none');
 select is(public.api_info('00000000-0000-0000-0000-00000000000a') -> 'cards' -> 0 ->> 'wallet_name', 'Venture X Card',
   'cards include their Wallet name');

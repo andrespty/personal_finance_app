@@ -1,6 +1,7 @@
 -- /info returns category names in one list and each category's subcategory
 -- names under its name, so a Shortcut can pick a category and then look up
 -- its subcategories. Top-level names are unique per user (ignoring case).
+-- Names sort alphabetically, with the catch-all "Other"/"Others" last.
 create or replace function public.api_info(user_ref uuid)
 returns jsonb
 language sql
@@ -20,13 +21,13 @@ as $$
       where a.user_id = user_ref and not a.archived and a.type = 'credit_card'
     ), '[]'::jsonb),
     'categories', coalesce((
-      select jsonb_agg(p.name order by lower(p.name))
+      select jsonb_agg(p.name order by lower(btrim(p.name)) in ('other', 'others'), lower(p.name))
       from public.categories p
       where p.user_id = user_ref and p.parent_id is null
     ), '[]'::jsonb),
     'subcategories', coalesce((
       select jsonb_object_agg(p.name, coalesce((
-        select jsonb_agg(c.name order by lower(c.name))
+        select jsonb_agg(c.name order by lower(btrim(c.name)) in ('other', 'others'), lower(c.name))
         from public.categories c
         where c.parent_id = p.id
       ), '[]'::jsonb))
