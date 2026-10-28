@@ -211,15 +211,13 @@ Deno.test('info returns pickers and a summary', async () => {
     api_info: () => ({
       accounts: [{ id: 'a', name: 'General Checking', alias: 'general', type: 'checking' }],
       cards: [{ id: 'c', name: 'Venture X', alias: 'vx', wallet_name: 'Venture X Card' }],
-      categories: [{ id: 'k', name: 'Food', path: 'Food' }, {
-        id: 'g',
-        name: 'Groceries',
-        path: 'Food/Groceries',
-      }],
+      categories: ['Food', 'Other'],
+      subcategories: { Food: ['Coffee', 'Groceries'], Other: [] },
     }),
   })
   const body = await (await request(db, '/v1/info')).json()
   assertEquals(body.message, '1 account, 1 card, 2 categories.')
+  assertEquals(body.subcategories.Food, ['Coffee', 'Groceries'])
   assertEquals(body.cards[0].wallet_name, 'Venture X Card')
 })
 
