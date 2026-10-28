@@ -5,6 +5,7 @@ API for iPhone Shortcuts. Each user has their own personal accounts and setup.
 
 ---
 
+
 ## 1. Architecture
 
 | Piece | Choice | Cost |
