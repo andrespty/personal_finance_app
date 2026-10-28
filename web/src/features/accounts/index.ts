@@ -10,5 +10,6 @@ export {
 export { AccountForm } from './components/AccountForm/AccountForm'
 export { AccountRow } from './components/AccountRow/AccountRow'
 export { CreditCard } from './components/CreditCard/CreditCard'
+export type { CreditCardProps } from './components/CreditCard/CreditCard'
 export type { Account, AccountType } from './types'
 export { accountGroupTitles, accountTypeLabels, groupAccounts, isCard } from './utils/accountType'

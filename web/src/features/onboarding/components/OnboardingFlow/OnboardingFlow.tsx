@@ -5,6 +5,7 @@ import type { Profile } from '@/features/profile'
 import { AccountsStep } from '../AccountsStep/AccountsStep'
 import { CardsStep } from '../AccountsStep/CardsStep'
 import { CategoriesStep } from '../CategoriesStep/CategoriesStep'
+import { PayersStep } from '../PayersStep/PayersStep'
 import { WelcomeStep } from '../WelcomeStep/WelcomeStep'
 
 import { useOnboardingFlow } from './useOnboardingFlow'
@@ -14,6 +15,7 @@ const stepComponents = {
   accounts: AccountsStep,
   cards: CardsStep,
   categories: CategoriesStep,
+  payers: PayersStep,
 }
 
 export function OnboardingFlow({ profile }: { profile: Profile }) {

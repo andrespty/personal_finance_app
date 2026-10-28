@@ -257,7 +257,6 @@ Shared modal forms: Transaction, Transfer, Payment, Account.
 3. **Cards** — add credit cards (skippable).
 4. **Categories** — pick from the starter list (see below).
 5. **Card payers** — per card, choose default payer and optional category rules.
-   (Added in build step 4; stored as `onboarding_step` 5.)
 6. **Done** → Dashboard.
 
 Progress is saved in `profiles.onboarding_step`, so setup resumes where the user
@@ -325,8 +324,8 @@ gradients, glows, emoji icons, or chatty copy.
    - 2a ✅ Database — schema, RLS, transfer/payment function, balances, pgTAP tests.
    - 2b ✅ Login and first screens — auth, accounts, categories, transactions,
      transfers/payments, activity.
-3. **Onboarding** ✅ — guided setup: name, accounts, cards, categories. The card
-   payers step is added with step 4.
-4. **Card payers & money left** — views + dashboard.
+3. **Onboarding** ✅ — guided setup: name, accounts, cards, categories, card payers.
+4. **Card payers & money left** ✅ — payer setup per card, shares, money left on
+   the dashboard and account pages.
 5. **API** — token management, `api` Edge Function, first Shortcuts.
 6. **Features** — to be discussed.
