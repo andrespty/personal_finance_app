@@ -38,14 +38,18 @@ Add `?format=text` to any URL to get back one plain sentence, ready for
 1. **Get Contents of URL**: GET `…/info`
 2. **Get Dictionary Value**: `cards` → **Repeat with Each** → `name` →
    **Choose from List** ("Which card?")
-3. **Get Dictionary Value**: `categories` → `path` → **Choose from List**
-   ("Category?")
-4. **Ask for Input**: Number, "Amount?"
-5. **Ask for Input**: Text, "Where?"
-6. **Get Contents of URL**: POST `…/card-transactions?format=text`, JSON body:
-   `card` = chosen card, `amount` = amount, `category` = chosen category,
+3. **Get Dictionary Value**: `categories` → **Choose from List** ("Category?")
+4. **Get Dictionary Value**: `subcategories` → **Get Dictionary Value** for the
+   chosen category (its subcategory names, possibly empty).
+5. **If** that list has any items: **Choose from List** ("Subcategory?") and set
+   `category` to `Category/Subcategory` (Text action). **Otherwise** set
+   `category` to the chosen category.
+6. **Ask for Input**: Number, "Amount?"
+7. **Ask for Input**: Text, "Where?"
+8. **Get Contents of URL**: POST `…/card-transactions?format=text`, JSON body:
+   `card` = chosen card, `amount` = amount, `category` = `category`,
    `merchant` = where
-7. **Show Result**
+9. **Show Result**
 
 ### How much do I have left?
 
@@ -89,6 +93,22 @@ the card), so `card` matches it.
 
 ## Endpoint reference
 
+`/info` returns:
+
+```json
+{
+  "accounts": [{ "id": "…", "name": "Fun Checking", "alias": "fun", "type": "checking" }],
+  "cards": [{ "id": "…", "name": "Venture X", "alias": "vx", "wallet_name": "Venture X Card" }],
+  "categories": ["Entertainment", "Food", "Other"],
+  "subcategories": {
+    "Entertainment": ["Events", "Gaming", "Movies"],
+    "Food": ["Coffee", "Groceries", "Restaurants"],
+    "Other": []
+  }
+}
+```
+
+
 `card`, `account`, `from` and `to` accept an account's name, short name, Apple
 Wallet name or id, ignoring case. `category` accepts a name or
 `Parent/Child` path; use the path when two subcategories share a name. Amounts
@@ -101,7 +121,7 @@ are positive dollars, as a number or text (`12.5`, `"$1,204.30"`). `date` is
 | POST | `/deposits` | `account`, `amount`, `category`?, `description`?, `date`? |
 | POST | `/withdrawals` | same as deposits; recorded as money out |
 | POST | `/transfers` | `from`, `to`, `amount`, `note`?, `date`? |
-| GET | `/info` | — returns `accounts`, `cards`, `categories` |
+| GET | `/info` | — returns `accounts`, `cards`, `categories` (names) and `subcategories` (names, keyed by category) |
 | GET | `/money-left` | `account`? (query) — returns each account's money left |
 
 Responses are JSON with a `message` sentence plus the data. Errors are JSON

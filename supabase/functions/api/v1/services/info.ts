@@ -3,7 +3,10 @@ import type { Db } from '../../_shared/db.ts'
 type Info = {
   accounts: { id: string; name: string; alias: string | null; type: string }[]
   cards: { id: string; name: string; alias: string | null; wallet_name: string | null }[]
-  categories: { id: string; name: string; path: string }[]
+  /** Top-level category names. */
+  categories: string[]
+  /** Subcategory names, keyed by their category's name. */
+  subcategories: Record<string, string[]>
 }
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`

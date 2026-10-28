@@ -50,10 +50,11 @@ reset role;
 select isnt((select last_used_at from public.api_tokens), null, 'using a token records when');
 set local role service_role;
 
-select is(jsonb_array_length(public.api_info('00000000-0000-0000-0000-00000000000a') -> 'categories'), 5,
-  'info lists every category');
-select ok(public.api_info('00000000-0000-0000-0000-00000000000a') -> 'categories' @> '[{"path": "Shopping/Clothing"}]',
-  'categories include their Parent/Child path');
+select is(public.api_info('00000000-0000-0000-0000-00000000000a') -> 'categories', '["Food", "Kids", "Shopping"]'::jsonb,
+  'info lists top-level category names');
+select is(public.api_info('00000000-0000-0000-0000-00000000000a') -> 'subcategories',
+  '{"Food": [], "Kids": ["Clothing"], "Shopping": ["Clothing"]}'::jsonb,
+  'subcategories are listed under their category''s name, empty when there are none');
 select is(public.api_info('00000000-0000-0000-0000-00000000000a') -> 'cards' -> 0 ->> 'wallet_name', 'Venture X Card',
   'cards include their Wallet name');
 

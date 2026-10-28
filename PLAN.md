@@ -140,7 +140,8 @@ Conventions:
 {
   "accounts":   [{ "id": "...", "name": "Fun Checking", "alias": "fun", "type": "checking" }],
   "cards":      [{ "id": "...", "name": "Venture X", "alias": "vx", "wallet_name": "Venture X Card" }],
-  "categories": [{ "id": "...", "name": "Gaming", "path": "Entertainment/Gaming" }]
+  "categories": ["Entertainment", "Food"],
+  "subcategories": { "Entertainment": ["Gaming", "Movies"], "Food": ["Groceries"] }
 }
 ```
 
