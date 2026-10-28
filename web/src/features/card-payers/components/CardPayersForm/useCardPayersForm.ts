@@ -15,9 +15,10 @@ export function useCardPayersForm({ setup, onDone }: { setup: PayerSetup; onDone
   const { data: accounts = [] } = useAccounts()
   const payers = accounts.filter((a) => a.type !== 'credit_card')
 
-  // With a single checking/savings account, it's the obvious default.
+  // Every card needs an "everything else" payer; start from the current one,
+  // or the first checking account.
   const [defaultPayerId, setDefaultPayerId] = useState(
-    setup.defaultPayerId ?? (setup.rules.length === 0 && payers.length === 1 ? payers[0].id : ''),
+    setup.defaultPayerId ?? (payers.find((p) => p.type === 'checking') ?? payers[0])?.id ?? '',
   )
   const [rules, setRules] = useState<RuleDraft[]>(() =>
     setup.rules.map((r) => ({
@@ -33,19 +34,8 @@ export function useCardPayersForm({ setup, onDone }: { setup: PayerSetup; onDone
     setRules((current) => current.map((r) => (r.key === key ? { ...r, ...change } : r)))
   }
 
-  function toggleCategory(key: number, categoryId: string) {
-    setRules((current) =>
-      current.map((r) =>
-        r.key !== key
-          ? r
-          : {
-              ...r,
-              categoryIds: r.categoryIds.includes(categoryId)
-                ? r.categoryIds.filter((id) => id !== categoryId)
-                : [...r.categoryIds, categoryId],
-            },
-      ),
-    )
+  function setRuleCategories(key: number, categoryIds: string[]) {
+    updateRule(key, { categoryIds })
   }
 
   function addRule() {
@@ -68,6 +58,10 @@ export function useCardPayersForm({ setup, onDone }: { setup: PayerSetup; onDone
 
   async function onSubmit() {
     setError(null)
+    if (!defaultPayerId) {
+      setError('Choose the account that pays for everything else.')
+      return
+    }
     const cleaned = cleanRules(rules)
     if (duplicateCategories(cleaned).length > 0) {
       setError('Each category can only be paid by one account.')
@@ -76,7 +70,7 @@ export function useCardPayersForm({ setup, onDone }: { setup: PayerSetup; onDone
     try {
       await save.mutateAsync({
         cardId: setup.cardId,
-        defaultPayerId: defaultPayerId === '' ? null : defaultPayerId,
+        defaultPayerId,
         rules: cleaned,
       })
       onDone()
@@ -91,7 +85,7 @@ export function useCardPayersForm({ setup, onDone }: { setup: PayerSetup; onDone
     setDefaultPayerId,
     rules,
     updateRule,
-    toggleCategory,
+    setRuleCategories,
     removeRule: (key: number) => setRules((current) => current.filter((r) => r.key !== key)),
     addRule,
     claimedBy,

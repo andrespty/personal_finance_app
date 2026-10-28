@@ -16,14 +16,10 @@ import {
   accountTypeLabels,
   isCard,
   useAccount,
+  CreditCard,
 } from '@/features/accounts'
 import { ActivityList, QuickAddSheet, type QuickAddMode } from '@/features/activity'
-import {
-  CategorySpendingPanel,
-  CoveredCardsPanel,
-  PayerCard,
-  WhoPaysPanel,
-} from '@/features/card-payers'
+import { CategorySpendingPanel, CoveredCardsPanel, WhoPaysPanel } from '@/features/card-payers'
 import { useMoneyLeft } from '@/features/money-left'
 import { formatCents } from '@/lib/money'
 
@@ -86,7 +82,7 @@ export function AccountDetailPage() {
       )}
 
       {card ? (
-        <PayerCard account={account} size="lg" />
+        <CreditCard account={account} size="lg" />
       ) : (
         <BankSummary
           label={`${accountTypeLabels[account.type]} balance`}

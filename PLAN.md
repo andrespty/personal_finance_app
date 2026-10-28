@@ -91,8 +91,9 @@ api_tokens
 
 ### Card payers & money left
 
-A card has one **default payer** and optional payers that cover specific
-categories. Example — Venture X:
+A card always has one **default payer** ("everything else"; a new card starts
+with the first checking account) and optional payers that cover specific
+categories. An account that pays a card can't be deleted. Example — Venture X:
 - Fun Checking pays for Clothing and Gaming
 - General Checking (default) pays for everything else
 

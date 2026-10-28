@@ -31,24 +31,12 @@ function CardPayersFields({ setup, onDone }: { setup: PayerSetup; onDone: () => 
 
   return (
     <div className="flex flex-col gap-6">
-      <SelectField
-        label="Pays for everything"
-        value={form.defaultPayerId}
-        onChange={form.setDefaultPayerId}
-        options={[{ value: '', label: 'No one yet' }, ...payerOptions]}
-        hint={
-          form.rules.length > 0
-            ? 'Everything not covered below.'
-            : 'The account that usually pays this card.'
-        }
-      />
-
       {form.rules.map((rule) => (
-        <section key={rule.key} className="border-border flex flex-col gap-3 border-t pt-5">
+        <section key={rule.key} className="flex flex-col gap-3">
           <div className="flex items-end gap-3">
             <div className="flex-1">
               <SelectField
-                label="Also pays from"
+                label="Pays for these categories"
                 value={rule.payerAccountId}
                 onChange={(payerAccountId) => form.updateRule(rule.key, { payerAccountId })}
                 options={payerOptions}
@@ -63,16 +51,15 @@ function CardPayersFields({ setup, onDone }: { setup: PayerSetup; onDone: () => 
             </Button>
           </div>
           <p className="text-muted text-sm">
-            Only for these categories. A parent covers its subcategories unless one has its own
-            rule.
+            Tap a category to include all of it, or pick only some subcategories.
           </p>
           {categories.length === 0 ? (
             <p className="text-muted text-sm">Add categories in Settings to use this.</p>
           ) : (
             <CategoryChips
               categories={categories}
-              selected={rule.categoryIds}
-              onToggle={(id) => form.toggleCategory(rule.key, id)}
+              picked={rule.categoryIds}
+              onChange={(ids) => form.setRuleCategories(rule.key, ids)}
               claimedBy={(id) => form.claimedBy(rule.key, id)}
             />
           )}
@@ -80,8 +67,23 @@ function CardPayersFields({ setup, onDone }: { setup: PayerSetup; onDone: () => 
       ))}
 
       <Button variant="secondary" onClick={form.addRule}>
-        {form.rules.length === 0 ? 'Split by category' : 'Add another account'}
+        {form.rules.length === 0
+          ? 'Split some categories to another account'
+          : 'Add another account'}
       </Button>
+
+      <SelectField
+        label={form.rules.length > 0 ? 'Everything else is paid by' : 'Paid by'}
+        value={form.defaultPayerId}
+        onChange={form.setDefaultPayerId}
+        placeholder="Choose an account"
+        options={payerOptions}
+        hint={
+          form.rules.length > 0
+            ? 'Covers every category not picked above.'
+            : 'The account that pays this card.'
+        }
+      />
 
       {form.error && (
         <p role="alert" className="text-negative text-sm">

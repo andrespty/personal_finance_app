@@ -1,17 +1,19 @@
 import { useState } from 'react'
 
-import { Button, EmptyState, ListRow, LoadingBlock, Sheet } from '@/components/ui'
+import { Button, LoadingBlock, Sheet } from '@/components/ui'
 import { useAccounts, type Account } from '@/features/accounts'
 import { useCategories } from '@/features/categories'
 import { cn } from '@/lib/cn'
 import { formatCents } from '@/lib/money'
 
 import { usePayerSetup, usePayerShares } from '../../api/cardPayers.queries'
-import { isConfigured } from '../../utils/payerSetup'
-import { payerRows } from '../../utils/shares'
+import { payerRows, percentOf } from '../../utils/shares'
 import { CardPayersForm } from '../CardPayersForm/CardPayersForm'
 
-/** Card detail tab: what each paying account owes, and editing who pays. */
+/**
+ * Card detail tab: one bar for the whole balance, split by the accounts that
+ * pay it, with a matching row per account.
+ */
 export function WhoPaysPanel({ card }: { card: Account }) {
   const [editing, setEditing] = useState(false)
   const setup = usePayerSetup(card.id)
@@ -21,50 +23,66 @@ export function WhoPaysPanel({ card }: { card: Account }) {
 
   if (!setup.data || !shares.data) return <LoadingBlock />
 
-  const configured = isConfigured(setup.data)
   const rows = payerRows(setup.data, shares.data, accounts, categories)
-  const largest = Math.max(1, ...rows.map((r) => r.shareCents))
+  const positive = rows.filter((r) => r.shareCents > 0)
+  const total = positive.reduce((sum, r) => sum + r.shareCents, 0)
 
   return (
-    <div className="flex flex-col">
-      {!configured && (
-        <EmptyState
-          title="Choose who pays this card"
-          body="Pick the account that pays it. You can split some categories to another account."
-        />
-      )}
-      {rows.map((row) => (
-        <ListRow
-          key={row.key}
-          title={row.name}
-          subtitle={
-            <>
-              {row.detail}
-              <span className="bg-fill mt-2 block h-1 overflow-hidden rounded-full">
-                <span
-                  className={cn(
-                    'block h-full',
-                    row.key === 'uncovered' ? 'bg-negative' : 'bg-accent',
-                  )}
-                  style={{ width: `${Math.max(0, (row.shareCents / largest) * 100)}%` }}
-                />
-              </span>
-            </>
-          }
-          trailing={
-            <span
-              className={cn(
-                'num text-[15px] font-semibold',
-                row.key === 'uncovered' && 'text-negative',
-              )}
-            >
-              {formatCents(row.shareCents)}
-            </span>
-          }
-        />
-      ))}
-      <Button variant="secondary" className="mt-4" onClick={() => setEditing(true)}>
-        {configured ? 'Change who pays' : 'Choose accounts'}
+    <div className="flex flex-col gap-4 pt-2">
+      <div>
+        <p className="text-muted text-sm">Owed by account</p>
+        <p className="num mt-0.5 text-[30px] font-semibold tracking-[-0.03em]">
+          {formatCents(total)}
+        </p>
+        {total > 0 && (
+          <div className="mt-3 flex h-2.5 gap-[3px]" aria-hidden="true">
+            {positive.map((row) => (
+              <span
+                key={row.key}
+                className="rounded-[3px]"
+                style={{ flex: row.shareCents, background: row.color }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <ul className="border-border flex flex-col border-t">
+        {rows.map((row) => {
+          const percent = percentOf(row.shareCents, total)
+          const uncovered = row.key === 'uncovered'
+          return (
+            <li key={row.key} className="border-border flex items-start gap-3 border-b py-3.5">
+              <span
+                className="mt-[5px] size-2.5 flex-none rounded-full"
+                style={{ background: row.color }}
+              />
+              <div className="min-w-0 flex-1">
+                <div
+                  className={cn('truncate text-[15px] font-medium', uncovered && 'text-negative')}
+                >
+                  {row.name}
+                </div>
+                <div className="text-muted mt-0.5 truncate text-[13px]">{row.detail}</div>
+              </div>
+              <div
+                className={cn(
+                  'num text-right text-[15px] font-semibold',
+                  uncovered && 'text-negative',
+                )}
+              >
+                {formatCents(row.shareCents)}
+                {percent !== null && (
+                  <div className="text-muted text-xs font-normal">{percent}%</div>
+                )}
+              </div>
+            </li>
+          )
+        })}
+      </ul>
+
+      <Button variant="secondary" onClick={() => setEditing(true)}>
+        Change who pays
       </Button>
 
       <Sheet open={editing} onClose={() => setEditing(false)} title={`Who pays ${card.name}`}>
