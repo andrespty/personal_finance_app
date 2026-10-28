@@ -1,33 +1,54 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 
-import { Button, EmptyState, LoadingBlock, PageHeader, Section, Sheet } from '@/components/ui'
 import {
+  Button,
+  EmptyState,
+  LoadingBlock,
+  PageHeader,
+  SegmentedControl,
+  Sheet,
+  type Segment,
+} from '@/components/ui'
+import {
+  AccountDangerZone,
   AccountForm,
   accountTypeLabels,
   isCard,
   useAccount,
-  useArchiveAccount,
-  useDeleteAccount,
 } from '@/features/accounts'
 import { ActivityList, QuickAddSheet, type QuickAddMode } from '@/features/activity'
-import { CoveredCardsSection, PayerCard, WhoPaysSection } from '@/features/card-payers'
+import {
+  CategorySpendingPanel,
+  CoveredCardsPanel,
+  PayerCard,
+  WhoPaysPanel,
+} from '@/features/card-payers'
 import { useMoneyLeft } from '@/features/money-left'
-import { errorMessage } from '@/lib/errors'
 import { formatCents } from '@/lib/money'
+
+type Tab = 'transactions' | 'categories' | 'payers' | 'cards'
+
+const cardTabs: Segment<Tab>[] = [
+  { value: 'transactions', label: 'Transactions' },
+  { value: 'categories', label: 'Categories' },
+  { value: 'payers', label: 'Who pays' },
+]
+
+const bankTabs: Segment<Tab>[] = [
+  { value: 'transactions', label: 'Transactions' },
+  { value: 'cards', label: 'For cards' },
+]
 
 export function AccountDetailPage() {
   const { accountId } = useParams()
   const navigate = useNavigate()
   const { data: account, isPending } = useAccount(accountId)
-  const archive = useArchiveAccount()
-  const remove = useDeleteAccount()
   const { data: moneyLeft = [] } = useMoneyLeft()
 
+  const [tab, setTab] = useState<Tab>('transactions')
   const [editing, setEditing] = useState(false)
   const [quickAdd, setQuickAdd] = useState<QuickAddMode | null>(null)
-  const [confirmingDelete, setConfirmingDelete] = useState(false)
-  const [error, setError] = useState<string | null>(null)
 
   if (isPending) return <LoadingBlock />
   if (!account) {
@@ -39,26 +60,6 @@ export function AccountDetailPage() {
   }
 
   const card = isCard(account)
-
-  async function onDelete() {
-    if (!account) return
-    if (!confirmingDelete) {
-      setConfirmingDelete(true)
-      return
-    }
-    setError(null)
-    try {
-      await remove.mutateAsync(account.id)
-      navigate('/accounts', { replace: true })
-    } catch (e) {
-      setConfirmingDelete(false)
-      setError(
-        (e as { code?: string }).code === '23503'
-          ? 'This account has transactions, so it can’t be deleted. Archive it instead.'
-          : errorMessage(e),
-      )
-    }
-  }
 
   return (
     <main className="flex flex-col gap-6">
@@ -76,6 +77,13 @@ export function AccountDetailPage() {
           </button>
         }
       />
+
+      {account.archived && (
+        <EmptyState
+          title="This account is archived."
+          body="It’s hidden from the dashboard and pickers."
+        />
+      )}
 
       {card ? (
         <PayerCard account={account} size="lg" />
@@ -96,41 +104,33 @@ export function AccountDetailPage() {
         </Button>
       </div>
 
-      {card ? <WhoPaysSection card={account} /> : <CoveredCardsSection accountId={account.id} />}
-
-      <Section title="Transactions">
-        <ActivityList
-          accountId={account.id}
-          groupByDay
-          emptyText="No transactions on this account yet."
+      <div className="flex flex-col gap-2">
+        <SegmentedControl
+          label="Show"
+          value={tab}
+          options={card ? cardTabs : bankTabs}
+          onChange={setTab}
         />
-      </Section>
-
-      <section className="flex flex-col gap-2">
-        {error && (
-          <p role="alert" className="text-negative text-sm">
-            {error}
-          </p>
+        {tab === 'transactions' && (
+          <ActivityList
+            accountId={account.id}
+            groupByDay
+            emptyText="No transactions on this account yet."
+          />
         )}
-        <Button
-          variant="ghost"
-          onClick={() => archive.mutate({ id: account.id, archived: !account.archived })}
-          disabled={archive.isPending}
-        >
-          {account.archived ? 'Unarchive account' : 'Archive account'}
-        </Button>
-        <Button
-          variant="ghost"
-          className="text-negative"
-          onClick={onDelete}
-          disabled={remove.isPending}
-        >
-          {confirmingDelete ? 'Tap again to delete' : 'Delete account'}
-        </Button>
-      </section>
+        {tab === 'categories' && card && <CategorySpendingPanel card={account} />}
+        {tab === 'payers' && card && <WhoPaysPanel card={account} />}
+        {tab === 'cards' && !card && <CoveredCardsPanel accountId={account.id} />}
+      </div>
 
       <Sheet open={editing} onClose={() => setEditing(false)} title="Edit account">
-        <AccountForm account={account} onDone={() => setEditing(false)} />
+        <div className="flex flex-col gap-6">
+          <AccountForm account={account} onDone={() => setEditing(false)} />
+          <AccountDangerZone
+            account={account}
+            onDeleted={() => navigate('/accounts', { replace: true })}
+          />
+        </div>
       </Sheet>
       <QuickAddSheet
         open={quickAdd !== null}
@@ -139,12 +139,6 @@ export function AccountDetailPage() {
         defaultAccountId={account.id}
         defaultToId={card ? account.id : undefined}
       />
-      {account.archived && (
-        <EmptyState
-          title="This account is archived."
-          body="It’s hidden from the dashboard and pickers."
-        />
-      )}
     </main>
   )
 }

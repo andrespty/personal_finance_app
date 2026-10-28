@@ -23,13 +23,13 @@ export async function addCardTransaction(db: Db, userId: string, input: CardTran
     amount_cents: refund ? -input.amount : input.amount,
     category_ref: input.category,
     description: input.description ?? null,
-    merchant: input.merchant ?? null,
+    merchant: input.merchant,
     on_date: input.date ?? null,
   })
   const amount = formatCents(input.amount)
   const message = refund
-    ? `Logged a ${amount} refund on ${transaction.account}.`
-    : `Logged ${amount}${input.merchant ? ` at ${input.merchant}` : ''} on ${transaction.account}.`
+    ? `Logged a ${amount} refund from ${input.merchant} on ${transaction.account}.`
+    : `Logged ${amount} at ${input.merchant} on ${transaction.account}.`
   return { message, transaction }
 }
 

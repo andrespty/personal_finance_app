@@ -2,7 +2,6 @@ import { useState } from 'react'
 
 import { Button, EmptyState, LoadingBlock, PageHeader, Section, Sheet } from '@/components/ui'
 import { AccountForm, isCard, useAccounts } from '@/features/accounts'
-import { ActivityList } from '@/features/activity'
 import { PayerCard } from '@/features/card-payers'
 import { MoneyLeftRow, useMoneyLeft } from '@/features/money-left'
 import { formatCents } from '@/lib/money'
@@ -65,10 +64,6 @@ export function DashboardPage() {
               ))}
             </Section>
           )}
-
-          <Section title="Recent" action={{ label: 'See all', to: '/activity' }}>
-            <ActivityList limit={5} emptyText="Tap + to add your first transaction." />
-          </Section>
         </>
       )}
 

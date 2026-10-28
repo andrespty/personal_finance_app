@@ -1,5 +1,3 @@
-import type { SelectOption } from '@/components/ui'
-
 import type { Category, CategoryNode } from '../types'
 
 const byName = (a: Category, b: Category) => a.name.localeCompare(b.name)
@@ -18,15 +16,4 @@ export function categoryLabel(category: Category, all: Category[]): string {
   if (!category.parent_id) return category.name
   const parent = all.find((c) => c.id === category.parent_id)
   return parent ? `${parent.name} › ${category.name}` : category.name
-}
-
-/** Picker options: each parent followed by its subcategories. */
-export function categoryOptions(categories: Category[]): SelectOption[] {
-  return buildCategoryTree(categories).flatMap((parent) => [
-    { value: parent.id, label: parent.name },
-    ...parent.children.map((child) => ({
-      value: child.id,
-      label: `${parent.name} › ${child.name}`,
-    })),
-  ])
 }

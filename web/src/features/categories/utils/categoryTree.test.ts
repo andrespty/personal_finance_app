@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import type { Category } from '../types'
 
-import { buildCategoryTree, categoryLabel, categoryOptions } from './categoryTree'
+import { buildCategoryTree, categoryLabel } from './categoryTree'
 
 const cat = (id: string, name: string, parent_id: string | null = null) =>
   ({ id, name, parent_id }) as Category
@@ -27,17 +27,5 @@ describe('categoryLabel', () => {
   it('includes the parent for subcategories', () => {
     expect(categoryLabel(all[2], all)).toBe('Shopping › Clothing')
     expect(categoryLabel(all[0], all)).toBe('Shopping')
-  })
-})
-
-describe('categoryOptions', () => {
-  it('lists each parent followed by its children', () => {
-    expect(categoryOptions(all).map((o) => o.label)).toEqual([
-      'Food',
-      'Food › Groceries',
-      'Shopping',
-      'Shopping › Clothing',
-      'Shopping › Home',
-    ])
   })
 })

@@ -2,6 +2,8 @@ import { z } from 'zod'
 
 import { parseAmount } from '@/lib/money'
 
+const isCard = (entry: string) => entry === 'charge' || entry === 'refund'
+
 export const transactionFormSchema = z
   .object({
     entryType: z.enum(['charge', 'refund', 'deposit', 'withdrawal']),
@@ -14,7 +16,11 @@ export const transactionFormSchema = z
     text: z.string().trim().max(100, 'Keep it under 100 characters.'),
     date: z.iso.date('Choose a date.'),
   })
-  .refine((v) => !(v.entryType === 'charge' || v.entryType === 'refund') || v.categoryId !== '', {
+  .refine((v) => !isCard(v.entryType) || v.categoryId !== '', {
     path: ['categoryId'],
     message: 'Card transactions need a category.',
+  })
+  .refine((v) => !isCard(v.entryType) || v.text !== '', {
+    path: ['text'],
+    message: 'Enter the merchant.',
   })
