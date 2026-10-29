@@ -124,10 +124,18 @@ are positive dollars, as a number or text (`12.5`, `"$1,204.30"`). `date` is
 | GET | `/info` | — returns `accounts`, `cards`, `categories` (names) and `subcategories` (names, keyed by category) |
 | GET | `/money-left` | `account`? (query) — returns each account's money left |
 
-Responses are JSON with a `message` sentence plus the data. Errors are JSON
-`{ "error": "…" }` with status 400 (something to fix in the request), 401 (bad
-token), or 404 (no such account or category). With `?format=text`, both come
-back as a plain sentence.
+Every JSON response has `success` (true or false) and a `message` sentence:
+
+```json
+{ "success": true, "message": "Logged $54.12 at Uniqlo on Venture X.", "transaction": { … } }
+{ "success": false, "message": "merchant is required.", "error": "merchant is required." }
+```
+
+In a Shortcut: **Get Dictionary Value** `success` → **If** it's true, show
+`message` (or nothing); **Otherwise** show `message` as the error. Failures
+also use status 400 (something to fix in the request), 401 (bad token), or 404
+(no such account or category). With `?format=text`, both come back as just the
+sentence.
 
 ### Try it from a terminal
 
