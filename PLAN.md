@@ -42,6 +42,8 @@ accounts
   type: checking | savings | credit_card
   opening_balance_cents   -- checking/savings only; cards always start at 0
   credit_limit_cents      -- cards only
+  card_color              -- cards only: forest, graphite, navy, petrol, plum, burgundy,
+                          --   espresso, copper, black, champagne, silver (null = forest)
   archived
 
 categories

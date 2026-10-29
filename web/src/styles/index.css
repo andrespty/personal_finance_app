@@ -12,9 +12,6 @@
   --on-accent: #ffffff;
   --positive: #167a4f;
   --negative: #b5432e;
-  --card-green: #123c2c;
-  --card-graphite: #2b2f2d;
-  --card-fg: #eef5f1;
   /* One color per account paying a card (Who pays, Categories). */
   --payer-1: #146b47;
   --payer-2: #c08a1e;
@@ -35,8 +32,6 @@
     --on-accent: #04140c;
     --positive: #5fd59a;
     --negative: #ff8a72;
-    --card-green: #1c4a37;
-    --card-graphite: #2a302d;
     --payer-1: #5fd59a;
     --payer-2: #e0b04a;
     --payer-3: #8fa9d6;
@@ -56,9 +51,6 @@
   --color-on-accent: var(--on-accent);
   --color-positive: var(--positive);
   --color-negative: var(--negative);
-  --color-card-green: var(--card-green);
-  --color-card-graphite: var(--card-graphite);
-  --color-card-fg: var(--card-fg);
 
   --font-sans:
     'Geist Variable', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto,
@@ -95,5 +87,17 @@
 @media (prefers-reduced-motion: reduce) {
   .sheet[open] {
     animation: none;
+  }
+}
+
+/* Credit cards (features/accounts CreditCard). Each card sets --cc-bg and
+   --cc-bg-dark from its own color. */
+.credit-card {
+  background: var(--cc-bg);
+}
+
+@media (prefers-color-scheme: dark) {
+  .credit-card {
+    background: var(--cc-bg-dark);
   }
 }

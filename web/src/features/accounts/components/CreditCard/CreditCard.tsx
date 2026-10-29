@@ -1,21 +1,30 @@
+import type { CSSProperties } from 'react'
 import { Link } from 'react-router'
 
 import { cn } from '@/lib/cn'
 import { formatCents } from '@/lib/money'
 
 import type { Account } from '../../types'
+import { cardColorOf, cardColors } from '../../utils/cardColors'
 
 export type CreditCardProps = {
   account: Account
-  /** Alternates card colors so neighbors are easy to tell apart. */
-  tone?: 'green' | 'graphite'
   size?: 'md' | 'lg'
   to?: string
 }
 
 /** A credit card drawn as a physical card, showing what is owed. */
-export function CreditCard({ account, tone = 'green', size = 'md', to }: CreditCardProps) {
+export function CreditCard({ account, size = 'md', to }: CreditCardProps) {
   const owed = account.balanceCents
+  const color = cardColors[cardColorOf(account.card_color)]
+  // Colors come from the card's own palette; .credit-card switches to the
+  // lifted shade in dark mode.
+  const style = {
+    '--cc-bg': color.bg,
+    '--cc-bg-dark': color.bgDark,
+    '--cc-track': color.track,
+    color: color.fg,
+  } as CSSProperties
 
   const body = (
     <>
@@ -41,19 +50,25 @@ export function CreditCard({ account, tone = 'green', size = 'md', to }: CreditC
   )
 
   const className = cn(
-    'flex aspect-[1.586] max-w-full flex-col justify-between rounded-2xl px-[18px] py-4 text-card-fg',
+    'credit-card flex aspect-[1.586] max-w-full flex-col justify-between rounded-2xl px-[18px] py-4',
     'shadow-[0_12px_24px_-14px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.08)]',
-    tone === 'green' ? 'bg-card-green' : 'bg-card-graphite',
     size === 'lg' ? 'w-full' : 'w-[260px] flex-none',
     to && 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
   )
 
   return to ? (
-    <Link to={to} className={className} aria-label={`${account.name}, owed ${formatCents(owed)}`}>
+    <Link
+      to={to}
+      className={className}
+      style={style}
+      aria-label={`${account.name}, owed ${formatCents(owed)}`}
+    >
       {body}
     </Link>
   ) : (
-    <div className={className}>{body}</div>
+    <div className={className} style={style}>
+      {body}
+    </div>
   )
 }
 
@@ -68,8 +83,8 @@ function LimitBar({ account }: { account: Account }) {
         <span>Limit {formatCents(limit)}</span>
         <span>{used.toFixed(0)}% used</span>
       </div>
-      <div className="mt-1.5 h-[5px] overflow-hidden rounded-full bg-white/15">
-        <div className="bg-card-fg h-full" style={{ width: `${used}%` }} />
+      <div className="mt-1.5 h-[5px] overflow-hidden rounded-full bg-(--cc-track)">
+        <div className="h-full bg-current" style={{ width: `${used}%` }} />
       </div>
     </div>
   )

@@ -45,13 +45,8 @@ export function DashboardPage() {
 
           {cards.length > 0 && (
             <div className="-mx-5 flex [scrollbar-width:none] gap-3 overflow-x-auto px-5 pt-0.5 pb-2.5">
-              {cards.map((card, i) => (
-                <CreditCard
-                  key={card.id}
-                  account={card}
-                  tone={i % 2 === 0 ? 'green' : 'graphite'}
-                  to={`/accounts/${card.id}`}
-                />
+              {cards.map((card) => (
+                <CreditCard key={card.id} account={card} to={`/accounts/${card.id}`} />
               ))}
             </div>
           )}
