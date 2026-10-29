@@ -51,7 +51,7 @@ export function DashboardPage() {
         />
       ) : (
         <>
-          <section className="flex flex-wrap items-start gap-x-7 gap-y-4">
+          <section className="flex items-start gap-4">
             {pinned && (
               <div className="min-w-0">
                 {bankAccounts.length > 1 ? (
@@ -74,7 +74,7 @@ export function DashboardPage() {
               </div>
             )}
             {cards.length > 0 && (
-              <div className="min-w-0">
+              <div className={cn('flex-none', pinned && 'ml-auto text-right')}>
                 <p className="text-muted text-sm">Owed on cards</p>
                 <p
                   className={cn(
