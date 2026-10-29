@@ -1,7 +1,7 @@
 import type { Context } from 'hono'
 
 import { DbCallError } from './db.ts'
-import { wantsText } from './respond.ts'
+import { replyError } from './respond.ts'
 
 type ErrorStatus = 400 | 401 | 403 | 404 | 500
 
@@ -34,5 +34,5 @@ export function toErrorResponse(c: Context, error: unknown) {
     console.error(error)
   }
 
-  return wantsText(c) ? c.text(message, status) : c.json({ error: message }, status)
+  return replyError(c, message, status)
 }

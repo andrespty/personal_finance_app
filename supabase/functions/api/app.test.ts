@@ -67,7 +67,9 @@ Deno.test('card charge: positive cents, merchant in the message', async () => {
     json: { card: 'vx', amount: '54.12', category: 'Shopping/Clothing', merchant: 'Uniqlo' },
   })
   assertEquals(res.status, 201)
-  assertEquals((await res.json()).message, 'Logged $54.12 at Uniqlo on Venture X.')
+  const body = await res.json()
+  assertEquals(body.success, true)
+  assertEquals(body.message, 'Logged $54.12 at Uniqlo on Venture X.')
   assertEquals(calls[1].args, {
     user_ref: USER,
     kind: 'card',
@@ -105,7 +107,11 @@ Deno.test('card transactions require a category, a merchant and a positive amoun
     json: { card: 'vx', amount: 5 },
   })
   assertEquals(noCategory.status, 400)
-  assertEquals((await noCategory.json()).error, 'category is required.')
+  assertEquals(await noCategory.json(), {
+    success: false,
+    message: 'category is required.',
+    error: 'category is required.',
+  })
 
   const noMerchant = await request(db, '/v1/card-transactions', {
     method: 'POST',
@@ -216,6 +222,7 @@ Deno.test('info returns pickers and a summary', async () => {
     }),
   })
   const body = await (await request(db, '/v1/info')).json()
+  assertEquals(body.success, true)
   assertEquals(body.message, '1 account, 1 card, 2 categories.')
   assertEquals(body.subcategories.Food, ['Coffee', 'Groceries'])
   assertEquals(body.cards[0].wallet_name, 'Venture X Card')
@@ -259,4 +266,5 @@ Deno.test('bad JSON and unknown paths get clear errors', async () => {
   assertEquals((await badJson.json()).error, 'Send the request body as JSON.')
   const nowhere = await request(db, '/v1/nope')
   assertEquals(nowhere.status, 404)
+  assertEquals((await nowhere.json()).success, false)
 })
