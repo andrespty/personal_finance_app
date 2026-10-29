@@ -1,24 +1,42 @@
 import { useState } from 'react'
 
-import { Button, EmptyState, LoadingBlock, PageHeader, Section, Sheet } from '@/components/ui'
-import { AccountForm, isCard, useAccounts, CreditCard } from '@/features/accounts'
+import {
+  Button,
+  ChevronDownIcon,
+  EmptyState,
+  LoadingBlock,
+  PageHeader,
+  Section,
+  Sheet,
+} from '@/components/ui'
+import {
+  AccountForm,
+  AccountPicker,
+  isCard,
+  pinnedAccountOf,
+  useAccounts,
+  CreditCard,
+} from '@/features/accounts'
 import { MoneyLeftRow, useMoneyLeft } from '@/features/money-left'
+import { useProfile, useUpdateProfile } from '@/features/profile'
+import { cn } from '@/lib/cn'
 import { formatCents } from '@/lib/money'
 
 export function DashboardPage() {
   const { data: accounts, isPending } = useAccounts()
   const { data: moneyLeft = [] } = useMoneyLeft()
+  const { data: profile } = useProfile()
+  const updateProfile = useUpdateProfile()
   const [addingAccount, setAddingAccount] = useState(false)
+  const [pickingPinned, setPickingPinned] = useState(false)
 
   if (isPending) return <LoadingBlock />
 
   const cards = accounts?.filter(isCard) ?? []
   const bankAccounts = accounts?.filter((a) => !isCard(a)) ?? []
   const leftFor = (id: string) => moneyLeft.find((m) => m.accountId === id)
-  const totalLeft = bankAccounts.reduce(
-    (sum, a) => sum + (leftFor(a.id)?.moneyLeftCents ?? a.balanceCents),
-    0,
-  )
+  const pinned = pinnedAccountOf(bankAccounts, profile?.pinned_account_id)
+  const otherAccounts = bankAccounts.filter((a) => a !== pinned)
   const owed = cards.reduce((sum, a) => sum + a.balanceCents, 0)
 
   return (
@@ -33,13 +51,44 @@ export function DashboardPage() {
         />
       ) : (
         <>
-          <section>
-            <p className="text-muted text-sm">Money left</p>
-            <p className="num mt-1 text-5xl leading-[1.05] font-semibold tracking-[-0.045em]">
-              {formatCents(totalLeft)}
-            </p>
+          <section className="flex flex-wrap items-start gap-x-7 gap-y-4">
+            {pinned && (
+              <div className="min-w-0">
+                {bankAccounts.length > 1 ? (
+                  <button
+                    type="button"
+                    onClick={() => setPickingPinned(true)}
+                    aria-label={`${pinned.name}. Change account`}
+                    className="text-muted focus-visible:outline-accent flex max-w-full items-center gap-1 text-sm focus-visible:outline-2"
+                  >
+                    <span className="truncate">{pinned.name}</span>
+                    <ChevronDownIcon className="size-3.5 flex-none" />
+                  </button>
+                ) : (
+                  <p className="text-muted truncate text-sm">{pinned.name}</p>
+                )}
+                <p className="num mt-1 text-[40px] leading-[1.05] font-semibold tracking-[-0.045em]">
+                  {formatCents(leftFor(pinned.id)?.moneyLeftCents ?? pinned.balanceCents)}
+                </p>
+                <p className="text-muted mt-1.5 text-sm">Money left</p>
+              </div>
+            )}
             {cards.length > 0 && (
-              <p className="text-muted mt-1.5 text-sm">After {formatCents(owed)} owed on cards</p>
+              <div className="min-w-0">
+                <p className="text-muted text-sm">Owed on cards</p>
+                <p
+                  className={cn(
+                    'num mt-1 font-semibold tracking-[-0.03em]',
+                    pinned ? 'text-2xl' : 'text-[40px] leading-[1.05] tracking-[-0.045em]',
+                    owed > 0 && 'text-negative',
+                  )}
+                >
+                  {formatCents(owed)}
+                </p>
+                <p className="text-muted mt-1.5 text-sm">
+                  {cards.length === 1 ? '1 card' : `${cards.length} cards`}
+                </p>
+              </div>
             )}
           </section>
 
@@ -51,9 +100,9 @@ export function DashboardPage() {
             </div>
           )}
 
-          {bankAccounts.length > 0 && (
+          {otherAccounts.length > 0 && (
             <Section title="Accounts" action={{ label: 'See all', to: '/accounts' }}>
-              {bankAccounts.map((account) => (
+              {otherAccounts.map((account) => (
                 <MoneyLeftRow key={account.id} account={account} moneyLeft={leftFor(account.id)} />
               ))}
             </Section>
@@ -63,6 +112,18 @@ export function DashboardPage() {
 
       <Sheet open={addingAccount} onClose={() => setAddingAccount(false)} title="New account">
         <AccountForm onDone={() => setAddingAccount(false)} />
+      </Sheet>
+
+      <Sheet open={pickingPinned} onClose={() => setPickingPinned(false)} title="Show on dashboard">
+        <AccountPicker
+          label="Account"
+          accounts={bankAccounts}
+          selectedId={pinned?.id}
+          onSelect={(account) => {
+            updateProfile.mutate({ pinned_account_id: account.id })
+            setPickingPinned(false)
+          }}
+        />
       </Sheet>
     </main>
   )

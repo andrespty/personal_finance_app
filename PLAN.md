@@ -36,6 +36,7 @@ Money is stored as **integer cents** (`bigint`).
 ```
 profiles
   user_id, display_name, onboarding_step
+  pinned_account_id      -- checking/savings shown on the dashboard (null = first checking)
 
 accounts
   id, user_id, name, alias, wallet_name
@@ -241,7 +242,7 @@ plus a floating **+** quick-add button.
 |---|---|
 | Login / Sign up | Email + password |
 | Onboarding | Guided setup (see below) |
-| Dashboard | Money left per checking/savings, owed per card, last 5 transactions |
+| Dashboard | Pinned account's money left (tap to switch) next to total owed on cards; cards; other accounts' money left |
 | Accounts | Grouped list with balances; add account |
 | Account detail | Balance, money left, card shares it covers, transactions; Deposit / Withdraw / Transfer |
 | Card detail | Total owed, breakdown by payer → category, transactions; Charge / Refund / Pay |
