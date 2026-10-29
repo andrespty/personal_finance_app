@@ -53,13 +53,8 @@ export function AccountsPage() {
               meta={`${formatCents(total(group.accounts))} owed`}
             >
               <div className="-mx-5 flex [scrollbar-width:none] gap-3 overflow-x-auto px-5 pt-3 pb-2.5">
-                {group.accounts.map((card, i) => (
-                  <CreditCard
-                    key={card.id}
-                    account={card}
-                    tone={i % 2 === 0 ? 'green' : 'graphite'}
-                    to={`/accounts/${card.id}`}
-                  />
+                {group.accounts.map((card) => (
+                  <CreditCard key={card.id} account={card} to={`/accounts/${card.id}`} />
                 ))}
               </div>
             </Section>

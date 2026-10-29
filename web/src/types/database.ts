@@ -27,6 +27,7 @@ export type Database = {
         Row: {
           alias: string | null
           archived: boolean
+          card_color: string | null
           created_at: string
           credit_limit_cents: number | null
           id: string
@@ -41,6 +42,7 @@ export type Database = {
         Insert: {
           alias?: string | null
           archived?: boolean
+          card_color?: string | null
           created_at?: string
           credit_limit_cents?: number | null
           id?: string
@@ -54,6 +56,7 @@ export type Database = {
         Update: {
           alias?: string | null
           archived?: boolean
+          card_color?: string | null
           created_at?: string
           credit_limit_cents?: number | null
           id?: string

@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { parseAmount } from '@/lib/money'
 
 import type { AccountInput } from './types'
+import { cardColorKeys } from './utils/cardColors'
 
 const optionalText = (max: number) =>
   z
@@ -32,6 +33,7 @@ export const accountFormSchema = z
     walletName: optionalText(80),
     openingBalance: amount('Enter an amount like 1250.00.'),
     creditLimit: amount('Enter an amount like 5000.'),
+    cardColor: z.enum(cardColorKeys),
   })
   .transform((v): AccountInput => ({
     name: v.name,
@@ -40,6 +42,7 @@ export const accountFormSchema = z
     wallet_name: v.type === 'credit_card' ? v.walletName : null,
     opening_balance_cents: v.type === 'credit_card' ? 0 : (v.openingBalance ?? 0),
     credit_limit_cents: v.type === 'credit_card' ? v.creditLimit : null,
+    card_color: v.type === 'credit_card' ? v.cardColor : null,
   }))
 
 export type AccountFormValues = z.input<typeof accountFormSchema>

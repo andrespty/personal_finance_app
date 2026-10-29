@@ -12,4 +12,5 @@ export type AccountInput = {
   wallet_name: string | null
   opening_balance_cents: number
   credit_limit_cents: number | null
+  card_color: string | null
 }

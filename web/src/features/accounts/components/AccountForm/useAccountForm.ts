@@ -6,6 +6,7 @@ import { centsToInput } from '@/lib/money'
 import { useCreateAccount, useUpdateAccount } from '../../api/accounts.queries'
 import { accountFormSchema } from '../../schemas'
 import type { Account, AccountType } from '../../types'
+import { cardColorOf, type CardColor } from '../../utils/cardColors'
 
 type Field = 'name' | 'alias' | 'walletName' | 'openingBalance' | 'creditLimit'
 
@@ -22,6 +23,7 @@ export function useAccountForm({
   const [name, setName] = useState(account?.name ?? '')
   const [alias, setAlias] = useState(account?.alias ?? '')
   const [walletName, setWalletName] = useState(account?.wallet_name ?? '')
+  const [cardColor, setCardColor] = useState<CardColor>(cardColorOf(account?.card_color))
   const [openingBalance, setOpeningBalance] = useState(
     account && account.type !== 'credit_card' ? centsToInput(account.opening_balance_cents) : '',
   )
@@ -52,6 +54,7 @@ export function useAccountForm({
       walletName,
       openingBalance,
       creditLimit,
+      cardColor,
     })
     if (!parsed.success) {
       setErrors(fieldErrors<Field>(parsed.error))
@@ -74,7 +77,7 @@ export function useAccountForm({
 
   return {
     isEdit: Boolean(account),
-    values: { type, name, alias, walletName, openingBalance, creditLimit },
+    values: { type, name, alias, walletName, openingBalance, creditLimit, cardColor },
     set: {
       type: setType,
       name: withClear('name', setName),
@@ -82,6 +85,7 @@ export function useAccountForm({
       walletName: withClear('walletName', setWalletName),
       openingBalance: withClear('openingBalance', setOpeningBalance),
       creditLimit: withClear('creditLimit', setCreditLimit),
+      cardColor: setCardColor,
     },
     errors,
     formError,

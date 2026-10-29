@@ -3,6 +3,8 @@ import { Button, SegmentedControl, TextField, type Segment } from '@/components/
 import type { Account, AccountType } from '../../types'
 import { accountTypeLabels } from '../../utils/accountType'
 
+import { CardColorPicker } from '../CardColorPicker/CardColorPicker'
+
 import { useAccountForm } from './useAccountForm'
 
 const typeOptions: Segment<AccountType>[] = [
@@ -80,6 +82,7 @@ export function AccountForm({ account, defaultType, onDone }: AccountFormProps) 
             hint="The card's name in Wallet, so Apple Pay purchases log here."
           />
         )}
+        {card && <CardColorPicker value={values.cardColor} onChange={set.cardColor} />}
       </div>
       {form.formError && (
         <p role="alert" className="text-negative text-sm">
