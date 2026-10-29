@@ -258,6 +258,7 @@ export type Database = {
           created_at: string
           display_name: string | null
           onboarding_step: number
+          pinned_account_id: string | null
           updated_at: string
           user_id: string
         }
@@ -266,6 +267,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           onboarding_step?: number
+          pinned_account_id?: string | null
           updated_at?: string
           user_id: string
         }
@@ -273,10 +275,33 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           onboarding_step?: number
+          pinned_account_id?: string | null
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: 'profiles_pinned_account_id_user_id_fkey'
+            columns: ['pinned_account_id', 'user_id']
+            isOneToOne: false
+            referencedRelation: 'account_balances'
+            referencedColumns: ['account_id', 'user_id']
+          },
+          {
+            foreignKeyName: 'profiles_pinned_account_id_user_id_fkey'
+            columns: ['pinned_account_id', 'user_id']
+            isOneToOne: false
+            referencedRelation: 'account_money_left'
+            referencedColumns: ['account_id', 'user_id']
+          },
+          {
+            foreignKeyName: 'profiles_pinned_account_id_user_id_fkey'
+            columns: ['pinned_account_id', 'user_id']
+            isOneToOne: false
+            referencedRelation: 'accounts'
+            referencedColumns: ['id', 'user_id']
+          },
+        ]
       }
       transactions: {
         Row: {
